@@ -397,12 +397,10 @@ class GameStateManager {
         };
 
         // KAPASITAS RUMAH AYAM PANGGUNG: 4 EKOR AYAM AKTIF SESUAI GAMBAR REFERENSI
-        // Kandang Sapi dan Domba harus dibeli terlebih dahulu di Toko.
+        // Hewan awal: Hanya 1 ekor ayam starter di awal permainan sesuai permintaan.
+        // Jika ayam bertambah sampai 5 ekor, rumah ayam ke-2 muncul; sampai 9 ekor, rumah ayam ke-3 muncul (Maksimal 12 ekor).
         this.animals = [
-            { id: "chk_1", type: "chicken", produceTime: 5000, timer: 1500 },
-            { id: "chk_2", type: "chicken", produceTime: 5000, timer: 2500 },
-            { id: "chk_3", type: "chicken", produceTime: 5000, timer: 3500 },
-            { id: "chk_4", type: "chicken", produceTime: 5000, timer: 4500 }
+            { id: "chk_1", type: "chicken", produceTime: 5000, timer: 1500 }
         ];
 
         this.groundItems = []; // [{ id, type, x, y, spawnTime }]
@@ -780,15 +778,13 @@ class GameStateManager {
     }
 
     syncAnimalsFromUpgrades() {
-        // Pastikan ayam tepat ada 4 ekor untuk kapasitas Rumah Ayam Panggung
+        // Minimal ada 1 ayam starter di awal dan batasi maksimal 12 ayam (3 kandang x 4 kapasitas)
         const ownedChickens = this.animals.filter(a => a.type === "chicken");
-        if (ownedChickens.length < 4) {
-            for (let i = ownedChickens.length + 1; i <= 4; i++) {
-                this.animals.push({ id: `chk_${i}`, type: "chicken", produceTime: 5000, timer: 1200 * i });
-            }
-        } else if (ownedChickens.length > 4) {
-            // Batasi maksimal 4 ekor ayam jika ada data save lama yang melebihi kapasitas
-            const excessIds = new Set(ownedChickens.slice(4).map(c => c.id));
+        if (ownedChickens.length === 0) {
+            this.animals.push({ id: "chk_1", type: "chicken", produceTime: 5000, timer: 1500 });
+        } else if (ownedChickens.length > 12) {
+            // Batasi maksimal 12 ekor ayam jika ada data save lama yang melebihi kapasitas
+            const excessIds = new Set(ownedChickens.slice(12).map(c => c.id));
             this.animals = this.animals.filter(a => !excessIds.has(a.id));
         }
 

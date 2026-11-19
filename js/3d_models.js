@@ -4596,7 +4596,7 @@ class ModelBuilder3D {
     // 8. Keset kain bertuliskan "EGGS" tebal cokelat di tanah depan tangga
     // 9. Pagar pembatas kayu kecil di sekeliling area khusus 4 ekor ayam
     // ==========================================
-    static createElevatedChickenCoop() {
+    static createElevatedChickenCoop(includeFence = false) {
         const root = new THREE.Group();
         root.name = "elevatedChickenCoop";
 
@@ -4960,54 +4960,56 @@ class ModelBuilder3D {
             root.add(groundEgg);
         });
 
-        // M. PAGAR PEMBATAS KAYU RUSTIC DI SEKELILING RUMAH AYAM
-        const fenceWoodMat = getMat(0x6D4C41, 0.9, 0.02);
-        const postH = 0.85;
-        const postRadius = 0.07;
-        const fencePostGeo = new THREE.CylinderGeometry(postRadius, postRadius, postH, 8);
+        // M. PAGAR PEMBATAS KAYU RUSTIC DI SEKELILING RUMAH AYAM (OPSIONAL)
+        if (includeFence) {
+            const fenceWoodMat = getMat(0x6D4C41, 0.9, 0.02);
+            const postH = 0.85;
+            const postRadius = 0.07;
+            const fencePostGeo = new THREE.CylinderGeometry(postRadius, postRadius, postH, 8);
 
-        const fMinX = -2.7;
-        const fMaxX = 2.4;
-        const fMinZ = -2.2;
-        const fMaxZ = 3.6;
+            const fMinX = -2.7;
+            const fMaxX = 2.4;
+            const fMinZ = -2.2;
+            const fMaxZ = 3.6;
 
-        const fencePostCoords = [
-            [fMinX, fMinZ], [0, fMinZ], [fMaxX, fMinZ],
-            [fMinX, (fMinZ + fMaxZ) / 2], [fMaxX, (fMinZ + fMaxZ) / 2],
-            [fMinX, fMaxZ], [-0.8, fMaxZ], [1.3, fMaxZ], [fMaxX, fMaxZ]
-        ];
-        fencePostCoords.forEach(([px, pz]) => {
-            const fp = new THREE.Mesh(fencePostGeo, fenceWoodMat);
-            fp.position.set(px, postH / 2, pz);
-            fp.castShadow = true;
-            root.add(fp);
-        });
-
-        const addRailsBetween = (x1, z1, x2, z2) => {
-            const dx = x2 - x1;
-            const dz = z2 - z1;
-            const len = Math.hypot(dx, dz);
-            const midX = (x1 + x2) / 2;
-            const midZ = (z1 + z2) / 2;
-            const rotY = Math.atan2(dx, dz);
-
-            [0.32, 0.62].forEach(ry => {
-                const rail = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, len), fenceWoodMat);
-                rail.position.set(midX, ry, midZ);
-                rail.rotation.y = rotY;
-                rail.castShadow = true;
-                root.add(rail);
+            const fencePostCoords = [
+                [fMinX, fMinZ], [0, fMinZ], [fMaxX, fMinZ],
+                [fMinX, (fMinZ + fMaxZ) / 2], [fMaxX, (fMinZ + fMaxZ) / 2],
+                [fMinX, fMaxZ], [-0.8, fMaxZ], [1.3, fMaxZ], [fMaxX, fMaxZ]
+            ];
+            fencePostCoords.forEach(([px, pz]) => {
+                const fp = new THREE.Mesh(fencePostGeo, fenceWoodMat);
+                fp.position.set(px, postH / 2, pz);
+                fp.castShadow = true;
+                root.add(fp);
             });
-        };
 
-        addRailsBetween(fMinX, fMinZ, 0, fMinZ);
-        addRailsBetween(0, fMinZ, fMaxX, fMinZ);
-        addRailsBetween(fMinX, fMinZ, fMinX, (fMinZ + fMaxZ) / 2);
-        addRailsBetween(fMinX, (fMinZ + fMaxZ) / 2, fMinX, fMaxZ);
-        addRailsBetween(fMaxX, fMinZ, fMaxX, (fMinZ + fMaxZ) / 2);
-        addRailsBetween(fMaxX, (fMinZ + fMaxZ) / 2, fMaxX, fMaxZ);
-        addRailsBetween(fMinX, fMaxZ, -0.8, fMaxZ);
-        addRailsBetween(1.3, fMaxZ, fMaxX, fMaxZ);
+            const addRailsBetween = (x1, z1, x2, z2) => {
+                const dx = x2 - x1;
+                const dz = z2 - z1;
+                const len = Math.hypot(dx, dz);
+                const midX = (x1 + x2) / 2;
+                const midZ = (z1 + z2) / 2;
+                const rotY = Math.atan2(dx, dz);
+
+                [0.32, 0.62].forEach(ry => {
+                    const rail = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, len), fenceWoodMat);
+                    rail.position.set(midX, ry, midZ);
+                    rail.rotation.y = rotY;
+                    rail.castShadow = true;
+                    root.add(rail);
+                });
+            };
+
+            addRailsBetween(fMinX, fMinZ, 0, fMinZ);
+            addRailsBetween(0, fMinZ, fMaxX, fMinZ);
+            addRailsBetween(fMinX, fMinZ, fMinX, (fMinZ + fMaxZ) / 2);
+            addRailsBetween(fMinX, (fMinZ + fMaxZ) / 2, fMinX, fMaxZ);
+            addRailsBetween(fMaxX, fMinZ, fMaxX, (fMinZ + fMaxZ) / 2);
+            addRailsBetween(fMaxX, (fMinZ + fMaxZ) / 2, fMaxX, fMaxZ);
+            addRailsBetween(fMinX, fMaxZ, -0.8, fMaxZ);
+            addRailsBetween(1.3, fMaxZ, fMaxX, fMaxZ);
+        }
 
         return root;
     }
@@ -5059,6 +5061,11 @@ class ModelBuilder3D {
         interiorFloor.position.set(0, 0.08, 0);
         interiorFloor.receiveShadow = true;
         root.add(interiorFloor);
+
+        // Lampu interior plafon garasi hangat
+        const garageLight = new THREE.PointLight(0xFFE5A0, 1.8, 12);
+        garageLight.position.set(0, wallH - 0.3, 0);
+        root.add(garageLight);
 
         // 2. DINDING BETON ABU-ABU (CONCRETE WALL PANELS)
         const halfW = gW / 2;
@@ -5206,8 +5213,8 @@ class ModelBuilder3D {
         root.add(signMesh);
 
         // 7. JALUR AKSES (DRIVEWAY) MENUJU JALAN RAYA DENGAN GARIS KUNING
-        // Menjulur ke depan dari pintu gerbang garasi sepanjang 8 meter
-        const drivewayLen = 8.0;
+        // Menjulur ke depan dari pintu gerbang garasi hingga persis tepi jalan raya (4.4 meter)
+        const drivewayLen = 4.4;
         const drivewayW = 4.4;
         const drivewayGeo = new THREE.PlaneGeometry(drivewayW, drivewayLen);
         const drivewayMesh = new THREE.Mesh(drivewayGeo, drivewayAsphaltMat);
@@ -5224,44 +5231,46 @@ class ModelBuilder3D {
         root.add(yellowLine);
 
         // Pagar Pembatas Kayu di Sisi Kiri & Kanan Jalur Masuk Driveway
+        // Berhenti sebelum mencapai jalan raya agar manuver belok kendaraan leluasa
         const fencePostGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.9, 8);
         const leftFenceX = -drivewayW / 2;
         const rightFenceX = drivewayW / 2;
+        const fenceLen = 3.2;
 
         [leftFenceX, rightFenceX].forEach(fx => {
-            for (let z = halfL + 0.2; z <= halfL + drivewayLen; z += 2.0) {
+            for (let z = halfL + 0.2; z <= halfL + fenceLen; z += 1.5) {
                 const fp = new THREE.Mesh(fencePostGeo, rusticWoodMat);
                 fp.position.set(fx, 0.45, z);
                 fp.castShadow = true;
                 root.add(fp);
             }
             [0.35, 0.7].forEach(ry => {
-                const rail = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, drivewayLen), rusticWoodMat);
-                rail.position.set(fx, ry, halfL + drivewayLen / 2);
+                const rail = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, fenceLen), rusticWoodMat);
+                rail.position.set(fx, ry, halfL + fenceLen / 2);
                 rail.castShadow = true;
                 root.add(rail);
             });
         });
 
-        // Palet Kayu Kecil Berisi Tong & Karung di Ujung Driveway Dekat Jalan
+        // Palet Kayu Kecil Berisi Tong & Karung di Samping Pagar Driveway
         const pallet = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.12, 1.2), crateWoodMat);
-        pallet.position.set(leftFenceX - 0.7, 0.06, halfL + drivewayLen - 1.0);
+        pallet.position.set(leftFenceX - 0.7, 0.06, halfL + 2.0);
         pallet.castShadow = true;
         root.add(pallet);
 
         const pDrum1 = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.75, 12), drumRedMat);
-        pDrum1.position.set(leftFenceX - 0.9, 0.48, halfL + drivewayLen - 1.2);
+        pDrum1.position.set(leftFenceX - 0.9, 0.48, halfL + 1.8);
         pDrum1.castShadow = true;
         root.add(pDrum1);
 
         const pCrate = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 0.5), crateWoodMat);
-        pCrate.position.set(leftFenceX - 0.5, 0.35, halfL + drivewayLen - 0.9);
+        pCrate.position.set(leftFenceX - 0.5, 0.35, halfL + 2.1);
         pCrate.castShadow = true;
         root.add(pCrate);
 
         const pSack = new THREE.Mesh(new THREE.SphereGeometry(0.25, 8, 8), sackMat);
         pSack.scale.set(1.0, 0.75, 1.2);
-        pSack.position.set(leftFenceX - 0.5, 0.24, halfL + drivewayLen - 1.35);
+        pSack.position.set(leftFenceX - 0.5, 0.24, halfL + 1.6);
         pSack.castShadow = true;
         root.add(pSack);
 

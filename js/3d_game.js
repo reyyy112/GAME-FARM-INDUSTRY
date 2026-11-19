@@ -213,10 +213,10 @@ class GameEngine3D {
 
         // 2. Bangunan Garasi Pengantaran (Delivery Garage) dengan Jalur Akses Driveway Aspal
         // Menggantikan gudang merah kecil dan petak gandum kuning di sebelah kanan Silo hitam
-        // Orientasi: Pintu gerbang utama menghadap lurus ke arah tenggara / kanan bawah langsung ke tepi jalan raya
+        // Orientasi: Lurus tegak lurus terhadap jalan raya (tidak miring), pintu menghadap lurus ke timur / jalan raya utama
         this.deliveryGarage = MB.createDeliveryGarage();
-        this.deliveryGarage.position.set(9.0, 0, -13.0);
-        this.deliveryGarage.rotation.y = Math.PI / 4;
+        this.deliveryGarage.position.set(6.0, 0, -12.5);
+        this.deliveryGarage.rotation.y = Math.PI / 2;
         this.scene.add(this.deliveryGarage);
 
         // 3. Gudang Perkakas Kecil Merah (Tool Shed)
@@ -242,7 +242,7 @@ class GameEngine3D {
 
         // Bak Air di Kandang Ayam (Bak Sapi & Domba berada di dalam grup paddock masing-masing)
         const troughChicken = MB.createWaterTrough();
-        troughChicken.position.set(-27, 0, 4);
+        troughChicken.position.set(-16.0, 0, 9.0);
         this.scene.add(troughChicken);
 
         // Tumpukan Gulungan Jerami (Hay Bales) Disusun Rapi Merapat ke Dinding Gedung (Tidak Menghalangi Gerobak)
@@ -276,11 +276,12 @@ class GameEngine3D {
         this.machineMeshes["loom_weaver"] = loomMachine;
 
         // ==========================================
-        // J. TRUK LOGISTIK 3D DI JALAN ASPAL
+        // J. TRUK LOGISTIK / KENDARAAN PENGANTARAN DI DALAM GARASI
+        // Terparkir rapi di lantai beton dalam garasi pengantaran (tidak miring)
         // ==========================================
         this.truckMesh = MB.createTruck(this.state.truck.level);
-        this.truckMesh.position.set(20.5, 0, 8);
-        this.truckMesh.rotation.y = Math.PI; // Menghadap ke depan (ke utara sepanjang jalan raya)
+        this.truckMesh.position.set(7.5, 0, -12.5);
+        this.truckMesh.rotation.y = Math.PI / 2; // Menghadap keluar pintu gerbang garasi
         if (this.truckMesh.userData && this.truckMesh.userData.driver) {
             this.truckMesh.userData.driver.visible = false;
         }
@@ -341,8 +342,8 @@ class GameEngine3D {
         this.createInteractivePad(10.5, 10.2, 1.4, "deposit", "Setor Wol", "deposit_loom");
         this.createInteractivePad(10.5, 13.8, 1.4, "pickup", "Ambil Kain", "pickup_loom");
 
-        this.createInteractivePad(18.0, 8.0, 1.8, "truck_load", "Muat Truk", "load_truck");
-        this.createInteractivePad(18.0, 12.5, 1.5, "truck_ship", "Kirim Truk", "ship_truck");
+        this.createInteractivePad(10.5, -10.5, 1.8, "truck_load", "Muat Truk", "load_truck");
+        this.createInteractivePad(13.2, -12.5, 1.5, "truck_ship", "Kirim Truk", "ship_truck");
         this.createInteractivePad(2.5, 3.2, 1.6, "shop", "Toko Upgrade", "shop");
 
         // Item panen awal ditaruh rapi di sarang jerami & ember susu (tidak berupa titik-titik acak di tanah)
@@ -402,14 +403,26 @@ class GameEngine3D {
         const postChk2 = new THREE.Mesh(postGeo, postMat); postChk2.position.set(-11, 0.7, 6.0); postChk2.castShadow = true;
         this.chickenPaddockGroup.add(fTopChk, fBotChk, fLeftChk, fRightTopChk, fRightBotChk, postChk1, postChk2);
 
-        // Rumah Panggung Ayam (Elevated Chicken Coop) - Berisi Kotak Sarang, Tangga, Keset EGGS, dan Kolong Panggung
-        this.chickenCoop = MB.createElevatedChickenCoop();
-        this.chickenCoop.position.set(-20.5, 0, 3.5);
-        this.chickenPaddockGroup.add(this.chickenCoop);
+        // 3 Rumah Panggung Ayam (Elevated Chicken Coops) Berjajar Menghadap ke Depan (Kapasitas Total 12 Ayam: 4 Ayam per Rumah)
+        this.chickenCoops = [];
+        this.chickenCoopPositions = [
+            { x: -24.5, z: 1.0 },
+            { x: -24.5, z: 4.5 },
+            { x: -24.5, z: 8.0 }
+        ];
+        this.chickenCoopPositions.forEach((pos, idx) => {
+            const coop = MB.createElevatedChickenCoop(false);
+            coop.position.set(pos.x, 0, pos.z);
+            coop.rotation.y = Math.PI / 2; // Menghadap ke depan (tenggara / arah kamera & halaman terbuka)
+            coop.visible = (idx === 0); // Di awal permainan hanya 1 kandang yang aktif
+            this.chickenCoops.push(coop);
+            this.chickenPaddockGroup.add(coop);
+        });
+        this.chickenCoop = this.chickenCoops[0];
 
         // Gundukan Jerami Alami di Sudut Kandang Ayam
-        const chkStraw1 = MB.createStrawMound(1.6, 0.85, 1.4); chkStraw1.position.set(-25.0, 0, -1.0);
-        const chkStraw2 = MB.createStrawMound(1.5, 0.80, 1.3); chkStraw2.position.set(-25.0, 0, 9.0);
+        const chkStraw1 = MB.createStrawMound(1.6, 0.85, 1.4); chkStraw1.position.set(-27.0, 0, -1.8);
+        const chkStraw2 = MB.createStrawMound(1.5, 0.80, 1.3); chkStraw2.position.set(-27.0, 0, 10.2);
         this.chickenPaddockGroup.add(chkStraw1, chkStraw2);
 
         // Rumpun Rumput Alami
@@ -1164,23 +1177,60 @@ class GameEngine3D {
         const ownedSheep = (this.state.animals || []).filter(a => a.type === "sheep");
 
         // ==========================================
-        // 1. KANDANG AYAM (CHICKEN COOP DENGAN KAPASITAS 4 EKOR ALAMI)
-        // Batasan visual: Maksimal 4 ekor ayam tertata alami sesuai referensi:
-        // Ayam 1: Di dalam kotak sarang samping (nesting box) di atas jerami mengerami telur
-        // Ayam 2: Di tengah tangga kayu (wooden ramp) bersiap turun/naik
-        // Ayam 3: Di bawah kolong panggung dekat tiang mematuk tanah
-        // Ayam 4: Di bagian depan bawah dekat keset 'EGGS' mencari makan
+        // 1. KANDANG AYAM (3 ELEVATED CHICKEN COOPS DENGAN KAPASITAS 4 EKOR PER RUMAH, MAKSIMAL 12 AYAM)
+        // Visibilitas kandang dinamis:
+        // 1-4 ayam: 1 kandang aktif
+        // 5-8 ayam: 2 kandang aktif
+        // 9-12 ayam: 3 kandang aktif
         // ==========================================
-        const chickenSpots = [
-            { x: -21.05, y: 1.07, z: 5.08, rotY: 0.2, variant: "brown", isNesting: true, isOnRamp: false, isUnderStilts: false },
-            { x: -19.85, y: 0.65, z: 5.55, rotY: 0.0, variant: "white", isNesting: false, isOnRamp: true, isUnderStilts: false },
-            { x: -21.1, y: 0.0, z: 3.5, rotY: 0.8, variant: "brown", isNesting: false, isOnRamp: false, isUnderStilts: true },
-            { x: -20.3, y: 0.0, z: 7.1, rotY: 0.0, variant: "white", isNesting: false, isOnRamp: false, isUnderStilts: false }
-        ];
+        const chickenCount = ownedChickens.length;
+        const activeCoopsCount = Math.max(1, Math.min(3, Math.ceil(chickenCount / 4)));
+        if (this.chickenCoops) {
+            this.chickenCoops.forEach((coop, i) => {
+                coop.visible = (i < activeCoopsCount);
+            });
+        }
 
-        const chickensToSpawn = ownedChickens.slice(0, 4);
+        const chickensToSpawn = ownedChickens.slice(0, 12);
         chickensToSpawn.forEach((animal, idx) => {
-            const spot = chickenSpots[idx] || chickenSpots[0];
+            const coopIdx = Math.min(2, Math.floor(idx / 4));
+            const slotIdx = idx % 4;
+            const basePos = (this.chickenCoopPositions && this.chickenCoopPositions[coopIdx]) 
+                || { x: -24.5, z: 1.0 + coopIdx * 3.5 };
+            const cX = basePos.x;
+            const cZ = basePos.z;
+
+            let spot;
+            if (slotIdx === 0) {
+                // Ayam ke-1: Di dalam kotak sarang samping di atas jerami mengerami telur
+                spot = {
+                    x: cX + 1.58, y: 1.07, z: cZ + 0.55,
+                    rotY: Math.PI / 2, variant: (idx % 2 === 0 ? "brown" : "white"),
+                    isNesting: true, isOnRamp: false, isUnderStilts: false
+                };
+            } else if (slotIdx === 1) {
+                // Ayam ke-2: Di tengah tangga kayu bersiap turun/naik
+                spot = {
+                    x: cX + 2.10, y: 0.65, z: cZ - 0.65,
+                    rotY: Math.PI / 2, variant: (idx % 2 === 1 ? "white" : "brown"),
+                    isNesting: false, isOnRamp: true, isUnderStilts: false
+                };
+            } else if (slotIdx === 2) {
+                // Ayam ke-3: Di bawah kolong panggung dekat tiang mematuk tanah
+                spot = {
+                    x: cX + 0.2, y: 0.0, z: cZ + 0.3,
+                    rotY: Math.PI * 0.7, variant: "brown",
+                    isNesting: false, isOnRamp: false, isUnderStilts: true
+                };
+            } else {
+                // Ayam ke-4: Di bagian depan bawah dekat keset 'EGGS' mencari makan
+                spot = {
+                    x: cX + 3.35, y: 0.0, z: cZ - 0.65,
+                    rotY: Math.PI / 2, variant: "white",
+                    isNesting: false, isOnRamp: false, isUnderStilts: false
+                };
+            }
+
             const mesh = MB.createChicken(spot.variant, spot.isNesting);
             mesh.position.set(spot.x, spot.y, spot.z);
             mesh.rotation.y = spot.rotY;
@@ -1196,8 +1246,8 @@ class GameEngine3D {
                 isUnderStilts: spot.isUnderStilts,
                 isEating: false,
                 penCenter: spot.isUnderStilts 
-                    ? { x: -21.1, z: 3.5, rx: 0.7, rz: 0.7 } 
-                    : { x: -20.3, z: 7.1, rx: 2.2, rz: 1.5 },
+                    ? { x: cX + 0.2, z: cZ + 0.3, rx: 0.6, rz: 0.6 } 
+                    : { x: cX + 3.5, z: cZ, rx: 3.0, rz: 1.4 },
                 targetX: spot.x,
                 targetZ: spot.z,
                 isWalking: false,
@@ -3112,8 +3162,8 @@ class GameEngine3D {
         if (this.truckMesh) {
             this.truckMesh.userData = this.truckMesh.userData || {};
             this.truckMesh.userData.level = currentLv;
-            this.truckMesh.position.set(20.5, 0, 8);
-            this.truckMesh.rotation.y = Math.PI; // Menghadap ke depan (ke utara sepanjang jalur aspal)
+            this.truckMesh.position.set(7.5, 0, -12.5);
+            this.truckMesh.rotation.y = Math.PI / 2; // Parkir rapi di lantai garasi menghadap ke pintu luar
             if (this.truckMesh.userData.driver) {
                 this.truckMesh.userData.driver.visible = false;
             }
@@ -3128,11 +3178,14 @@ class GameEngine3D {
         }
         if (!this.truckMesh) return;
 
-        const dockZ = 8.0;
+        const dockX = 7.5;
+        const dockZ = -12.5;
+        const roadX = 20.5;
         const edgeZ = -170.0;
         const waitMs = 5000; // Tepat 5 detik berhenti/tunggu di ujung map
-        const totalMs = this.state.truck.deliverDuration || 25000;
+        const totalMs = this.state.truck.deliverDuration || 45000;
         const travelMs = Math.max(1000, (totalMs - waitMs) / 2);
+        const exitMs = Math.min(3000, travelMs * 0.15);
 
         if (this.state.truck.status === "delivering") {
             this.state.truck.deliverTimer += dt * 1000;
@@ -3145,13 +3198,31 @@ class GameEngine3D {
 
             if (timer < travelMs) {
                 // ==========================================
-                // FASE 1: BERANGKAT MENUJU UJUNG MAP
-                // Melaju ke arah utara (-Z) menyusuri jalan raya hingga ujung map (Z = -170)
+                // FASE 1: BERANGKAT DARI DALAM GARASI MENUJU UJUNG MAP
+                // Keluar garasi menyusuri driveway, berbelok ke jalan raya, melaju utara (-Z) ke Z = -170
                 // ==========================================
-                const frac = Math.min(1.0, timer / travelMs);
-                this.truckMesh.position.z = dockZ + frac * (edgeZ - dockZ);
-                this.truckMesh.position.x = 20.5;
-                this.truckMesh.rotation.y = Math.PI; // Menghadap ke utara (arah jalan raya)
+                if (timer < exitMs) {
+                    const u = timer / exitMs;
+                    if (u < 0.70) {
+                        // Maju lurus keluar dari dalam garasi menyusuri jalan aspal driveway
+                        const p = u / 0.70;
+                        this.truckMesh.position.x = dockX + p * (18.5 - dockX);
+                        this.truckMesh.position.z = dockZ;
+                        this.truckMesh.rotation.y = Math.PI / 2; // Menghadap timur ke jalan raya
+                    } else {
+                        // Belok kiri mulus saat memasuki badan jalan raya utama (arah utara)
+                        const turnRatio = (u - 0.70) / 0.30;
+                        this.truckMesh.position.x = 18.5 + turnRatio * (roadX - 18.5);
+                        this.truckMesh.position.z = dockZ - turnRatio * 2.0;
+                        this.truckMesh.rotation.y = Math.PI / 2 + turnRatio * (Math.PI / 2); // Putar dari PI/2 ke PI
+                    }
+                } else {
+                    // Melaju kencang menyusuri jalur jalan raya aspal ke utara (-Z)
+                    const roadFrac = Math.min(1.0, (timer - exitMs) / (travelMs - exitMs));
+                    this.truckMesh.position.x = roadX;
+                    this.truckMesh.position.z = (dockZ - 2.0) + roadFrac * (edgeZ - (dockZ - 2.0));
+                    this.truckMesh.rotation.y = Math.PI; // Menghadap utara
+                }
 
                 // Roda berputar maju & kaki pengendara mengayuh pedal
                 if (this.truckMesh.userData && this.truckMesh.userData.wheels) {
@@ -3171,8 +3242,7 @@ class GameEngine3D {
                 // Berhenti diam di ujung map Z = -170 selama tepat 5 detik
                 // ==========================================
                 const waitElapsed = timer - travelMs;
-                this.truckMesh.position.z = edgeZ;
-                this.truckMesh.position.x = 20.5;
+                this.truckMesh.position.set(roadX, 0, edgeZ);
 
                 // Roda berhenti & pengendara diam santai
                 if (this.truckMesh.userData && this.truckMesh.userData.driver) {
@@ -3192,14 +3262,41 @@ class GameEngine3D {
                 }
             } else if (timer < totalMs) {
                 // ==========================================
-                // FASE 3: BALIK LAGI KE PETERNAKAN
-                // Melaju ke arah selatan (+Z) dari ujung map kembali ke dermaga peternakan (Z = 8)
+                // FASE 3: BALIK LAGI KE PETERNAKAN & MASUK KE DALAM GARASI
+                // Melaju selatan (+Z) ke Z = -12.5, belok kanan masuk driveway ke dalam garasi
                 // ==========================================
                 const retElapsed = timer - (travelMs + waitMs);
-                const frac = Math.min(1.0, retElapsed / travelMs);
-                this.truckMesh.position.z = edgeZ + frac * (dockZ - edgeZ);
-                this.truckMesh.position.x = 20.5;
-                this.truckMesh.rotation.y = 0; // Menghadap ke selatan (arah kembali)
+                const roadRetMs = travelMs - exitMs;
+
+                if (retElapsed < roadRetMs) {
+                    // Melaju di jalan raya ke arah selatan (+Z)
+                    const roadFrac = Math.min(1.0, retElapsed / roadRetMs);
+                    this.truckMesh.position.x = roadX;
+                    this.truckMesh.position.z = edgeZ + roadFrac * ((dockZ - 2.0) - edgeZ);
+                    this.truckMesh.rotation.y = 0; // Menghadap ke selatan
+                } else {
+                    // Masuk ke simpang garasi, belok kanan dan parkir kembali ke dalam garasi
+                    const u = Math.min(1.0, (retElapsed - roadRetMs) / exitMs);
+                    if (u < 0.30) {
+                        // Belok kanan mulus dari jalan raya ke arah barat (driveway)
+                        const turnRatio = u / 0.30;
+                        this.truckMesh.position.x = roadX - turnRatio * (roadX - 18.5);
+                        this.truckMesh.position.z = (dockZ - 2.0) + turnRatio * 2.0;
+                        this.truckMesh.rotation.y = -turnRatio * (Math.PI / 2); // Dari 0 ke -PI/2 (menghadap barat)
+                    } else if (u < 0.88) {
+                        // Melaju lurus masuk ke dalam garasi
+                        const driveFrac = (u - 0.30) / 0.58;
+                        this.truckMesh.position.x = 18.5 - driveFrac * (18.5 - dockX);
+                        this.truckMesh.position.z = dockZ;
+                        this.truckMesh.rotation.y = -Math.PI / 2; // Menghadap barat masuk ke garasi
+                    } else {
+                        // Tiba di slot parkir dalam garasi, putar haluan menghadap keluar pintu
+                        const turnFrac = (u - 0.88) / 0.12;
+                        this.truckMesh.position.x = dockX;
+                        this.truckMesh.position.z = dockZ;
+                        this.truckMesh.rotation.y = -Math.PI / 2 + turnFrac * Math.PI; // Putar haluan ke +PI/2
+                    }
+                }
 
                 // Roda berputar & kaki pengendara mengayuh
                 if (this.truckMesh.userData && this.truckMesh.userData.wheels) {
@@ -3215,13 +3312,13 @@ class GameEngine3D {
                 }
             } else {
                 // ==========================================
-                // FASE 4: TIBA KEMBALI DI PETERNAKAN
-                // Parkir rapi, serahkan uang hasil penjualan, dan beri partikel emas
+                // FASE 4: TIBA KEMBALI DI DALAM GARASI PETERNAKAN
+                // Parkir rapi di lantai garasi, serahkan uang hasil penjualan, dan beri partikel emas
                 // ==========================================
                 this.state.truck.status = "docked";
                 this.state.truck.deliverTimer = 0;
-                this.truckMesh.position.set(20.5, 0, dockZ);
-                this.truckMesh.rotation.y = Math.PI;
+                this.truckMesh.position.set(dockX, 0, dockZ);
+                this.truckMesh.rotation.y = Math.PI / 2; // Menghadap keluar pintu garasi
                 if (this.truckMesh.userData && this.truckMesh.userData.driver) {
                     this.truckMesh.userData.driver.visible = false;
                 }
@@ -3233,13 +3330,13 @@ class GameEngine3D {
                 this.state.truck.potentialRevenue = 0;
 
                 this.sound.playCash();
-                this.spawnSparks3D(this.truckMesh.position.x, 2, this.truckMesh.position.z, 0xFFD700, 30);
-                this.showToast(`💰 Armada pengantar tiba kembali di peternakan! Hasil penjualan: Rp ${earned.toLocaleString("id-ID")}`, 4000);
+                this.spawnSparks3D(dockX, 2, dockZ, 0xFFD700, 30);
+                this.showToast(`💰 Armada pengantar tiba kembali di garasi! Hasil penjualan: Rp ${earned.toLocaleString("id-ID")}`, 4000);
                 this.updateHUD();
             }
         } else {
-            this.truckMesh.position.set(20.5, 0, dockZ);
-            this.truckMesh.rotation.y = Math.PI;
+            this.truckMesh.position.set(dockX, 0, dockZ);
+            this.truckMesh.rotation.y = Math.PI / 2;
             if (this.truckMesh.userData && this.truckMesh.userData.driver) {
                 this.truckMesh.userData.driver.visible = false;
             }
@@ -3760,7 +3857,7 @@ class GameEngine3D {
                 title: "🐔 Ayam Petelur",
                 desc: "Menghasilkan 🥚 Telur Ayam segar di kandang ayam.",
                 cost: 25,
-                max: 4
+                max: 12
             },
             {
                 type: "cow",
@@ -3858,7 +3955,14 @@ class GameEngine3D {
                             this.spawnSparks3D(-4.2, 1.2, 5.5, 0x00E5FF, 25);
                             this.renderAnimalShopItems();
                             this.updateHUD();
-                            this.showToast(`🎉 Berhasil membeli 1 ${a.name}! Langsung dilepas ke kandang ternak.`);
+                            const newCount = this.state.getAnimalCount(a.type);
+                            if (a.type === "chicken" && newCount === 5) {
+                                this.showToast(`🎉 Berhasil membeli Ayam ke-5! 🏠 Rumah Ayam ke-2 telah muncul di peternakan!`, 4000);
+                            } else if (a.type === "chicken" && newCount === 9) {
+                                this.showToast(`🎉 Berhasil membeli Ayam ke-9! 🏠 Rumah Ayam ke-3 telah muncul di peternakan!`, 4000);
+                            } else {
+                                this.showToast(`🎉 Berhasil membeli 1 ${a.name}! Langsung dilepas ke kandang ternak.`);
+                            }
                         }
                     });
                 }
