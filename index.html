@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[🏭] Farm Industry 3D - Web Game (IMK Edition)</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- TOP HUD: Floating Casual Farm Badges (Sesuai Persis Foto Referensi media_1794443741827_e16e2a11.jpg) -->
+    <header class="top-hud">
+        <div class="hud-pill-bar">
+            <!-- 1. BADGE TINGKAT / LEVEL (Bintang Emas 3D & Bar XP Ungu Pastel) -->
+            <div class="hud-pill-group hud-level-pill">
+                <div class="hud-star-crest">
+                    <span class="hud-star-ribbon"></span>
+                    <span class="hud-star-level" id="hudPlayerLevel">1</span>
+                </div>
+                <div class="hud-pill-body hud-pill-purple">
+                    <div class="hud-pill-label">TINGKAT</div>
+                    <div class="hud-xp-track">
+                        <div class="hud-xp-fill" id="hudXpFill" style="width: 25%;"></div>
+                        <span class="hud-xp-text" id="hudLevelXp">0 / 215 XP</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. BADGE KOIN / UANG (Koin Emas Bulat & Pil Krem dengan Tombol +) -->
+            <div class="hud-pill-group hud-cash-pill">
+                <div class="hud-coin-icon">
+                    <span>$</span>
+                </div>
+                <div class="hud-pill-body hud-pill-cream">
+                    <span class="hud-cash-value" id="hudCash">Rp 250</span>
+                    <button class="hud-plus-btn" id="btnQuickAddCash" title="Buka Toko Upgrade">+</button>
+                </div>
+            </div>
+
+            <!-- 3. BADGE BINTANG PRESTASI & TIMER MISI (Pil Hijau Pastel dengan 5 Bintang & Memo Misi) -->
+            <div class="hud-pill-group hud-stars-pill">
+                <div class="hud-pill-body hud-pill-green" id="btnPillStars" title="Klik untuk Lihat Prestasi">
+                    <div class="hud-rating-stars">
+                        <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span>
+                    </div>
+                    <span class="hud-stars-count" id="hudStars">150</span>
+                </div>
+                <div class="hud-sub-tag hud-quest-tag" id="btnQuickMisiTag" title="Buka Papan Misi">
+                    <span class="tag-icon">📋</span>
+                    <span id="hudMissionCountdown">MISI: SIAP</span>
+                </div>
+            </div>
+
+            <!-- 4. BADGE RANSEL & MUATAN TRUK (Pil Biru Pastel dengan Tombol Buka) -->
+            <div class="hud-pill-group hud-bag-pill">
+                <div class="hud-avatar-icon">
+                    <span>🎒</span>
+                </div>
+                <div class="hud-pill-body hud-pill-blue">
+                    <span class="hud-bag-count" id="hudBag">0 / 10</span>
+                    <button class="hud-mini-btn" id="btnQuickBagAction">BUKA</button>
+                </div>
+                <div class="hud-sub-tag hud-truck-tag" id="btnQuickTruckTag" title="Status Muatan Truk">
+                    <span class="tag-icon">🚚</span>
+                    <span id="hudTruckStatus">0/6</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. FLOATING COMPACT ACTION BUTTONS (Tombol Aksi Lingkaran Melayang yang Rapi & Esensial) -->
+        <div class="hud-floating-menu">
+            <button class="hud-circle-btn btn-quest" id="btnOpenQuests" title="Misi Harian">📜</button>
+            <button class="hud-circle-btn btn-pet" id="btnOpenAnimalShop" title="Toko Hewan">🐾</button>
+            <button class="hud-circle-btn btn-shop" id="btnOpenShop" title="Toko Upgrade">🏪</button>
+            <button class="hud-circle-btn btn-ship" id="btnShipTruck" title="Kirim Truk">🚀</button>
+            <button class="hud-circle-btn btn-sub" id="btnToggleCamera" title="Kamera (V)">🎥</button>
+            <button class="hud-circle-btn btn-sub" id="btnHowToPlay" title="Panduan">❓</button>
+            <button class="hud-circle-btn btn-sub" id="btnToggleSound" title="Suara">🔊</button>
+            <button class="hud-circle-btn btn-sub" id="btnResetGame" title="Mulai Ulang Game dari Awal">🔄</button>
+        </div>
+    </header>
+
+    <!-- 3D GAMEPLAY VIEWPORT -->
+    <main class="game-wrapper">
+        <div class="canvas-container" id="canvasContainer">
+            <!-- Three.js Canvas diinjeksi secara otomatis -->
+            <div class="camera-toast" id="cameraToast">🎥 Mode Kamera: Birds-Eye Overview</div>
+            <div class="fpv-reticle" id="fpvReticle"></div>
+
+            <!-- Prompt Interaksi Roblox Style [E] Ambil Telur (Sesuai Screenshot Referensi) -->
+            <div class="interact-prompt hidden" id="interactPrompt">
+                <div class="interact-key">E</div>
+                <div class="interact-info">
+                    <span class="interact-title" id="interactTitle">Telur Ayam</span>
+                    <span class="interact-action" id="interactAction">Ambil</span>
+                </div>
+            </div>
+
+            <!-- Badge Tutorial Kiri Bawah (Persis Screenshot Referensi) -->
+            <div class="tutorial-badge" id="btnTutorialBadge">
+                <span class="tutorial-avatar">🐔</span>
+                <span class="tutorial-text">Tutorial</span>
+            </div>
+        </div>
+
+        <footer class="controls-hint">
+            <div>
+                🎮 <strong>Kontrol:</strong> 
+                <span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span> atau <span class="kbd">Panah</span> jalan | 
+                <span class="kbd">V</span> Ganti Kamera (Diorama ⇄ First-Person POV) | 
+                <strong>Tarik Mouse</strong> tengok sekeliling (FPV) / klik tanah tujuan
+            </div>
+            <div>
+                <span class="kbd">E</span> Aksi Cepat | <span class="kbd">Spasi</span> Kirim Truk
+            </div>
+        </footer>
+    </main>
+
+    <!-- MODAL 1: TOKO UPGRADE & EKSPANSI -->
+    <div class="modal-overlay hidden" id="shopModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>🏪 Toko Upgrade & Ekspansi Industri 3D</h2>
+                <button class="btn-close close-modal">&times;</button>
+            </div>
+            <div class="modal-body" id="shopItemsList">
+                <!-- Di-generate otomatis oleh 3d_game.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: PANDUAN CARA BERMAIN (HOW TO PLAY) -->
+    <div class="modal-overlay hidden" id="howToPlayModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>💡 Panduan Alur Siklus Farm Industry 3D</h2>
+                <button class="btn-close close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="shop-card">
+                    <div class="shop-card-info">
+                        <h4>1. 🐔 Panen Hasil Hewan Ternak 3D</h4>
+                        <p>Hewan akan secara otomatis menghasilkan bahan mentah di tanah (Ayam ➔ 🥚 Telur, Sapi ➔ 🥛 Susu, Domba ➔ 🧶 Wol). Dekati untuk menariknya dengan magnet panen ke ransel.</p>
+                    </div>
+                </div>
+                <div class="shop-card">
+                    <div class="shop-card-info">
+                        <h4>2. 🏭 Olah di Mesin Pabrik 3D</h4>
+                        <p>Berdiri di atas lingkaran <strong>SETOR</strong> di depan mesin untuk memproses bahan mentah menjadi barang bernilai tinggi (🥫 Mayones, 🧀 Keju, 🧵 Kain). Ambil hasilnya di lingkaran <strong>AMBIL</strong>!</p>
+                    </div>
+                </div>
+                <div class="shop-card">
+                    <div class="shop-card-info">
+                        <h4>3. 🚚 Muat ke Truk 3D & Kirim Ekspedisi</h4>
+                        <p>Berdiri di lingkaran <strong>MUAT TRUK 📦</strong> untuk memindahkan muatan ke bak truk. Lalu berdiri di <strong>KIRIM TRUK 🚀</strong> atau tekan Spasi untuk memberangkatkan truk dan dapatkan gelontoran uang tunai!</p>
+                    </div>
+                </div>
+                <div class="shop-card special-card">
+                    <div class="shop-card-info">
+                        <h4>4. 💤 Produksi Saat Offline</h4>
+                        <p>Game ini tetap menghitung hasil produksi ternak Anda saat browser ditutup. Begitu Anda kembali, hasil panen langsung menanti!</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap;">
+                    <button class="btn btn-primary close-modal" style="flex: 1; min-width: 140px;">Siap Bermain!</button>
+                    <button class="btn btn-warning" id="btnResetGameProgress" style="background: #E53935; color: #FFF; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer;">🔄 Mulai Peternakan dari Awal (Reset)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: SELAMAT DATANG KEMBALI (OFFLINE PRODUCTION EARNINGS) -->
+    <div class="modal-overlay hidden" id="offlineModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>💤 Selamat Datang Kembali!</h2>
+                <button class="btn-close close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="offline-card">
+                    <p id="offlineDurationText">Ternak Anda tetap aktif berproduksi saat Anda offline!</p>
+                    <div class="offline-items-grid">
+                        <div class="offline-item-badge">
+                            🥚 <span id="offlineEggCount">0</span> Telur
+                        </div>
+                        <div class="offline-item-badge">
+                            🥛 <span id="offlineMilkCount">0</span> Susu
+                        </div>
+                        <div class="offline-item-badge">
+                            🧶 <span id="offlineWoolCount">0</span> Wol
+                        </div>
+                    </div>
+                    <p style="margin-top: 14px; font-size: 0.85rem; color: #94A3B8;">
+                        Hasil panen offline telah siap di area kandang hewan. Kumpulkan dan olah di pabrik untuk keuntungan maksimal!
+                    </p>
+                </div>
+                <button class="btn btn-primary close-modal" style="margin-top: 10px;">Klaim & Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: TOKO HEWAN TERNAK (ANIMAL SHOP CART) -->
+    <div class="modal-overlay hidden" id="animalShopModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>🐾 Toko Hewan Ternak (Gerobak Pedagang)</h2>
+                <button class="btn-close close-modal">&times;</button>
+            </div>
+            <div class="modal-body" id="animalShopItemsList">
+                <!-- Di-generate dinamis oleh 3d_game.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 5: MENU MISI & PENUKARAN HADIAH (QUEST GUI) PERSIS SCREENSHOT REFERENSI -->
+    <div class="modal-overlay hidden" id="questModal">
+        <div class="quest-frame-modal">
+            <!-- Header Plakat Kayu Misi -->
+            <div class="quest-header-plaque">
+                <span class="plaque-leaf left">🍃</span>
+                <h2>Misi</h2>
+                <span class="plaque-leaf right">🍃</span>
+                <button class="quest-btn-close close-modal close-quest-modal" id="btnCloseQuestModal">&times;</button>
+            </div>
+
+            <!-- Bar Status: Total Bintang, Countdown Timer 24 Jam, Tombol Refresh -->
+            <div class="quest-top-bar">
+                <div class="quest-star-badge" id="questStarBadge">
+                    <span class="star-icon">⭐</span>
+                    <span class="star-amount" id="questStarAmount">150</span>
+                    <button class="btn-star-details">&gt;&gt;</button>
+                </div>
+
+                <div class="quest-timer-box">
+                    <div class="timer-label">Misi Diperbaruhi Dalam</div>
+                    <div class="timer-countdown" id="questTimerCountdown">23:24:46</div>
+                </div>
+
+                <button class="btn-quest-refresh" id="btnRefreshQuests">
+                    <span class="refresh-icon">🔄</span> Refresh
+                </button>
+            </div>
+
+            <!-- Tab Navigasi: Harian & Mingguan -->
+            <div class="quest-tabs-nav">
+                <button class="quest-tab-btn active" id="tabQuestDaily">Harian</button>
+                <button class="quest-tab-btn" id="tabQuestWeekly">Mingguan</button>
+            </div>
+
+            <!-- Daftar Kartu Misi -->
+            <div class="quest-cards-container" id="questCardsList">
+                <!-- Di-render dinamis oleh 3d_game.js -->
+            </div>
+
+            <!-- Catatan Kaki Info -->
+            <div class="quest-footer-note">
+                <span class="info-icon">ⓘ</span> Gunakan Bintang untuk membeli skin di toko skin.
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL RANSEL / INVENTARIS PETERNAK -->
+    <!-- Sesuai Permintaan: Klik HUD Ransel Buka Isi Tas & Muatan -->
+    <!-- ========================================== -->
+    <div class="modal-overlay hidden" id="inventoryModal" style="z-index: 99990;">
+        <div class="modal-box inventory-modal-box">
+            <div class="modal-header inv-modal-header">
+                <div class="inv-header-title-wrap">
+                    <span class="inv-header-icon">🎒</span>
+                    <div>
+                        <h2>Ransel & Inventaris Peternak</h2>
+                        <div class="inv-header-subtitle">Kelola hasil panen ransel & muatan armada pengantar</div>
+                    </div>
+                </div>
+                <button class="btn-close close-modal" id="btnCloseInventoryModal">&times;</button>
+            </div>
+
+            <div class="inventory-container">
+                <!-- Navigasi Tab: Isi Ransel vs Muatan Truk -->
+                <div class="inventory-tab-bar">
+                    <button class="inventory-tab-btn active" id="tabInvBag">
+                        🎒 Ransel Utama (<span id="invBagTabCount">0/10</span>)
+                    </button>
+                    <button class="inventory-tab-btn" id="tabInvTruck">
+                        🚚 Muatan Armada (<span id="invTruckTabCount">0/6</span>)
+                    </button>
+                </div>
+
+                <!-- Bagian 1: Ransel Pemain -->
+                <div id="sectionInvBag" class="inventory-section">
+                    <div class="inventory-capacity-bar-wrap">
+                        <div class="inv-cap-label-row">
+                            <span>Status Kapasitas Ransel:</span>
+                            <strong id="invBagCapacityText">0 / 10 Barang (0% Penuh)</strong>
+                        </div>
+                        <div class="inv-cap-track">
+                            <div class="inv-cap-fill" id="invBagCapacityFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div id="invBagItemsList" class="inventory-grid">
+                        <!-- Rendered dynamically -->
+                    </div>
+
+                    <!-- Summary & Quick Actions Footer -->
+                    <div class="inventory-footer-summary">
+                        <div class="inv-summary-left">
+                            <div class="inv-total-value">
+                                💰 Total Nilai Jual: <span id="invBagTotalValue">Rp 0</span>
+                            </div>
+                            <div class="inv-sub-desc">
+                                💡 Tip: Olah bahan mentah di mesin pabrik untuk keuntungan berlipat ganda!
+                            </div>
+                        </div>
+                        <div class="inv-summary-right">
+                            <button id="btnUpgradeBagFromInv" class="btn btn-secondary" style="background:#5C6BC0; color:#FFF; font-weight:700;">
+                                🎒 Perbesar Ransel
+                            </button>
+                            <button id="btnLoadAllToTruck" class="btn btn-primary" style="background:#2E7D32; font-weight:700;">
+                                🚚 Muat Semua ke Truk
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bagian 2: Muatan Truk Pengantar -->
+                <div id="sectionInvTruck" class="inventory-section hidden">
+                    <div class="inventory-capacity-bar-wrap">
+                        <div class="inv-cap-label-row">
+                            <span>Muatan Armada (<span id="invTruckName">Sepeda Onthel</span>):</span>
+                            <strong id="invTruckCapacityText">0 / 6 Muatan (0% Penuh)</strong>
+                        </div>
+                        <div class="inv-cap-track">
+                            <div class="inv-cap-fill truck-fill" id="invTruckCapacityFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div id="invTruckItemsList" class="inventory-grid">
+                        <!-- Rendered dynamically -->
+                    </div>
+
+                    <div class="inventory-footer-summary">
+                        <div class="inv-summary-left">
+                            <div class="inv-total-value">
+                                💵 Estimasi Omzet Pengiriman: <span id="invTruckTotalValue">Rp 0</span>
+                            </div>
+                            <div class="inv-sub-desc" id="invTruckStatusDesc">
+                                Status Kendaraan: Siap muat barang di dermaga peternakan.
+                            </div>
+                        </div>
+                        <div class="inv-summary-right">
+                            <button id="btnShipTruckFromInv" class="btn btn-primary btn-ship-green" style="background:#1565C0; font-weight:800; font-size:1rem; padding:10px 18px;">
+                                🚀 Berangkatkan Armada
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL LAYAR UTAMA & PEMBUATAN KARAKTER -->
+    <!-- Sesuai Permintaan Pengguna & Foto media_1794703405357_9322cde2.jpg -->
+    <!-- ========================================== -->
+    <div class="modal-overlay hidden" id="characterCreationModal" style="z-index: 99999; backdrop-filter: blur(8px); background: rgba(15, 23, 42, 0.88);">
+        <div class="char-create-frame">
+            <!-- Header Papan Kayu -->
+            <div class="char-create-header">
+                <div class="char-header-title">🌱 SELAMAT DATANG DI GREEN VALLEY 🌱</div>
+                <div class="char-header-subtitle">Buat Identitas & Pilih Karakter Peternak Impian Anda</div>
+            </div>
+
+            <div class="char-create-body">
+                <!-- Form Input Identitas -->
+                <div class="char-inputs-row">
+                    <div class="char-input-group">
+                        <label for="inputPlayerName">🧑‍🌾 Nama Peternak:</label>
+                        <input type="text" id="inputPlayerName" maxlength="16" placeholder="Petani Hebat" value="Petani Hebat" autocomplete="off">
+                    </div>
+                    <div class="char-input-group">
+                        <label for="inputFarmName">🏡 Nama Peternakan:</label>
+                        <input type="text" id="inputFarmName" maxlength="22" placeholder="Green Valley Farm" value="Green Valley Farm" autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="char-select-heading">PILIH KARAKTER PETERNAK:</div>
+
+                <!-- 4 Pilihan Karakter Sesuai Foto Referensi -->
+                <div class="char-grid-selection">
+                    <!-- 1. Kakek Petani Bijak -->
+                    <div class="char-card selected" data-char="grandpa">
+                        <div class="char-badge">Ahli & Berpengalaman</div>
+                        <div class="char-avatar-wrapper">
+                            <img src="assets/avatars/char_grandpa.png" alt="Kakek Petani Bijak" class="char-avatar-img">
+                        </div>
+                        <div class="char-name">Kakek Petani Bijak</div>
+                        <div class="char-tool-badge">🌾 Alat: Garpu Rumput</div>
+                        <div class="char-desc">Kakek tangguh berjanggut putih dengan garpu rumput legendaris, kaya pengalaman merawat tanah dan hewan.</div>
+                    </div>
+
+                    <!-- 2. Gadis Petani Ceria -->
+                    <div class="char-card" data-char="girl">
+                        <div class="char-badge" style="background: #E91E63;">Ceria & Ramah</div>
+                        <div class="char-avatar-wrapper">
+                            <img src="assets/avatars/char_girl.png" alt="Gadis Petani Ceria" class="char-avatar-img">
+                        </div>
+                        <div class="char-name">Gadis Petani Ceria</div>
+                        <div class="char-tool-badge">🌻 Alat: Sekop Kebun</div>
+                        <div class="char-desc">Gadis manis bertopi bundar dengan sekop andalan, membawa keceriaan dan bunga mekar di setiap sudut kebun.</div>
+                    </div>
+
+                    <!-- 3. Petani Wanita Mandiri -->
+                    <div class="char-card" data-char="woman">
+                        <div class="char-badge" style="background: #2E7D32;">Mandiri & Cekatan</div>
+                        <div class="char-avatar-wrapper">
+                            <img src="assets/avatars/char_woman.png" alt="Petani Wanita Mandiri" class="char-avatar-img">
+                        </div>
+                        <div class="char-name">Petani Wanita Mandiri</div>
+                        <div class="char-tool-badge">🧺 Alat: Keranjang Panen</div>
+                        <div class="char-desc">Wanita tangguh berkemeja putih rapi dengan keranjang panen, teliti dan cekatan mengelola hasil bumi.</div>
+                    </div>
+
+                    <!-- 4. Pemuda Petani Bersemangat -->
+                    <div class="char-card" data-char="boy">
+                        <div class="char-badge" style="background: #EF6C00;">Penuh Semangat</div>
+                        <div class="char-avatar-wrapper">
+                            <img src="assets/avatars/char_boy.png" alt="Pemuda Petani Bersemangat" class="char-avatar-img">
+                        </div>
+                        <div class="char-name">Pemuda Bersemangat</div>
+                        <div class="char-tool-badge">🌱 Alat: Cangkul & Gembor</div>
+                        <div class="char-desc">Pemuda penuh energi bertopi jerami dengan cangkul dan gembor air, siap menyambut fajar peternakan baru!</div>
+                    </div>
+                </div>
+
+                <!-- Tombol Mulai Petualangan -->
+                <div class="char-action-footer">
+                    <button class="btn-start-game" id="btnStartAdventure">
+                        <span class="btn-icon">🚀</span> MULAI PETUALANGAN PETERNAKAN
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- THREE.JS 3D ENGINE & GAME SCRIPTS -->
+    <script src="js/three.min.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/textures.js"></script>
+    <script src="js/3d_models.js"></script>
+    <script src="js/3d_game.js"></script>
+</body>
+</html>
