@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materi Presentasi PPT - Farm Industry 3D (IMK Edition)</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 14mm 16mm 14mm 16mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+            color: #1E293B;
+            background-color: #F8FAFC;
+            line-height: 1.55;
+            font-size: 10pt;
+            margin: 0;
+            padding: 0;
+        }
+
+        .cover-page {
+            page-break-after: always;
+            background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%);
+            color: #FFFFFF;
+            padding: 40px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .cover-badge {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.25);
+            border: 1px solid #60A5FA;
+            color: #93C5FD;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 9pt;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .cover-title {
+            font-size: 26pt;
+            font-weight: 800;
+            line-height: 1.2;
+            margin: 0 0 10px 0;
+            color: #FFFFFF;
+        }
+
+        .cover-subtitle {
+            font-size: 13pt;
+            color: #CBD5E1;
+            max-width: 650px;
+            margin: 0 auto 25px auto;
+            font-weight: 400;
+        }
+
+        .cover-meta {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            padding: 16px 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            text-align: left;
+        }
+
+        .cover-meta-item {
+            font-size: 9.5pt;
+        }
+
+        .cover-meta-label {
+            color: #94A3B8;
+            font-size: 8pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .cover-meta-value {
+            color: #F8FAFC;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .toc-box {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            page-break-after: always;
+        }
+
+        .toc-title {
+            font-size: 14pt;
+            font-weight: 800;
+            color: #0F172A;
+            margin-top: 0;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #3B82F6;
+            padding-bottom: 6px;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px 20px;
+            font-size: 8.5pt;
+        }
+
+        .toc-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #E2E8F0;
+            padding: 4px 0;
+        }
+
+        .toc-item-num {
+            font-weight: 700;
+            color: #2563EB;
+            margin-right: 8px;
+            width: 55px;
+            flex-shrink: 0;
+        }
+
+        .toc-item-name {
+            color: #334155;
+            flex-grow: 1;
+        }
+
+        .slide-card {
+            background: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 22px;
+            break-inside: avoid;
+            page-break-inside: avoid;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+            position: relative;
+        }
+
+        .slide-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #E2E8F0;
+            padding-bottom: 10px;
+            margin-bottom: 14px;
+        }
+
+        .slide-number-pill {
+            background: #2563EB;
+            color: #FFFFFF;
+            font-size: 8pt;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .slide-title-main {
+            font-size: 13pt;
+            font-weight: 800;
+            color: #0F172A;
+            margin: 0;
+            flex-grow: 1;
+            margin-left: 12px;
+        }
+
+        .section-label {
+            font-size: 8pt;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #64748B;
+            margin-top: 10px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-label::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #3B82F6;
+            border-radius: 2px;
+        }
+
+        .content-box {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 9pt;
+            color: #1E293B;
+            margin-bottom: 10px;
+        }
+
+        .content-box ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .content-box li {
+            margin-bottom: 5px;
+        }
+
+        .content-box li:last-child {
+            margin-bottom: 0;
+        }
+
+        .content-box strong {
+            color: #0F172A;
+        }
+
+        .visual-box {
+            background: #F0FDF4;
+            border: 1px solid #BBF7D0;
+            border-left: 4px solid #16A34A;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 8.5pt;
+            color: #166534;
+            margin-bottom: 10px;
+        }
+
+        .visual-box strong {
+            color: #14532D;
+        }
+
+        .notes-box {
+            background: #EFF6FF;
+            border: 1px solid #BFDBFE;
+            border-left: 4px solid #2563EB;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 8.5pt;
+            color: #1E40AF;
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        .notes-box strong {
+            color: #1E3A8A;
+            font-style: normal;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .team-card {
+            background: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 8pt;
+        }
+
+        .team-name {
+            font-weight: 800;
+            color: #0F172A;
+            font-size: 9pt;
+        }
+
+        .team-role {
+            color: #2563EB;
+            font-weight: 700;
+            margin-bottom: 4px;
+            font-size: 8pt;
+        }
+
+        .team-desc {
+            color: #475569;
+            line-height: 1.4;
+        }
+
+        .highlight-badge {
+            display: inline-block;
+            background: #FEF3C7;
+            color: #92400E;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 8pt;
+        }
+
+        .heuristics-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            font-size: 8.5pt;
+        }
+
+        .heuristic-item {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 4px;
+            padding: 6px 8px;
+        }
+
+        .heuristic-num {
+            font-weight: 800;
+            color: #2563EB;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 8pt;
+            color: #94A3B8;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #E2E8F0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- COVER PAGE -->
+    <div class="cover-page">
+        <div class="cover-badge">Buku Panduan & Materi Lengkap Slide Presentasi</div>
+        <h1 class="cover-title">FARM INDUSTRY 3D<br>(IMK EDITION)</h1>
+        <p class="cover-subtitle">Simulasi Industri Peternakan 3D Berbasis Web: Implementasi Desain Antarmuka, Sistem Interaksi, dan Evaluasi Usability</p>
+        
+        <div class="cover-meta">
+            <div class="cover-meta-item">
+                <div class="cover-meta-label">Mata Kuliah</div>
+                <div class="cover-meta-value">Interaksi Manusia dan Komputer (IMK)</div>
+            </div>
+            <div class="cover-meta-item">
+                <div class="cover-meta-label">Semester / Jenjang</div>
+                <div class="cover-meta-value">Semester 5 — Sarjana (S1)</div>
+            </div>
+            <div class="cover-meta-item">
+                <div class="cover-meta-label">Teknologi Inti</div>
+                <div class="cover-meta-value">Three.js, WebGL, Canvas PBR, Web Audio API</div>
+            </div>
+            <div class="cover-meta-item">
+                <div class="cover-meta-label">Format Dokumen</div>
+                <div class="cover-meta-value">19 Slide Lengkap (Konten, Visual & Speaker Notes)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLE OF CONTENTS -->
+    <div class="toc-box">
+        <h2 class="toc-title">DAFTAR KONTEN 19 SLIDE PRESENTASI</h2>
+        <div class="toc-grid">
+            <div class="toc-item"><span class="toc-item-num">Slide 01</span><span class="toc-item-name">Judul & Identitas Proyek</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 02</span><span class="toc-item-name">Tim Pengembang & Pembagian Tugas (Job Desk)</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 03</span><span class="toc-item-name">Definisi & Pengenalan Game</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 04</span><span class="toc-item-name">Alur Utama Permainan (Core Gameplay Loop)</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 05</span><span class="toc-item-name">Hewan 1 — Peternakan Ayam & Pengolahan Mayones</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 06</span><span class="toc-item-name">Hewan 2 — Sapi Perah & Industri Pengolahan Keju</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 07</span><span class="toc-item-name">Hewan 3 — Domba Wol & Industri Tekstil Premium</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 08</span><span class="toc-item-name">Personalisasi: 4 Pilihan Karakter Peternak</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 09</span><span class="toc-item-name">Tampilan HUD Modern & Sistem Inventaris Ransel</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 10</span><span class="toc-item-name">Sistem Dual-Camera & Kontrol Multimodal</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 11</span><span class="toc-item-name">Affordance, Signifiers & Feedback Sistem</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 12</span><span class="toc-item-name">Rantai Logistik: 6 Tingkat Evolusi Armada Kendaraan</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 13</span><span class="toc-item-name">Toko Upgrade, Gerobak Hewan & Kandang Dinamis</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 14</span><span class="toc-item-name">Gamifikasi: Papan Misi & Produksi Offline</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 15</span><span class="toc-item-name">Dinamika Dunia: Serigala vs Anjing Penjaga</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 16</span><span class="toc-item-name">Teknologi Grafis: Three.js & Tekstur PBR Prosedural</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 17</span><span class="toc-item-name">Teknologi Audio: Sintesis Suara Prosedural (Web Audio)</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 18</span><span class="toc-item-name">Penerapan 10 Heuristik Usability (Jakob Nielsen)</span></div>
+            <div class="toc-item"><span class="toc-item-num">Slide 19</span><span class="toc-item-name">Kesimpulan & Sesi Live Demonstration</span></div>
+        </div>
+    </div>
+
+    <!-- SLIDE 1 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 01 / 19</span>
+            <h3 class="slide-title-main">JUDUL & IDENTITAS PROYEK</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>Judul Game:</strong> FARM INDUSTRY 3D (IMK EDITION)</li>
+                <li><strong>Sub-Judul:</strong> Perancangan Antarmuka & Interaksi Manusia-Komputer pada Game Simulasi Agribisnis 3D Berbasis Web</li>
+                <li><strong>Mata Kuliah:</strong> Interaksi Manusia dan Komputer (IMK) — Semester 5</li>
+                <li><strong>Dosen Pengampu:</strong> [Nama Dosen Pengampu, Gelar]</li>
+                <li><strong>Kelompok / Kelas:</strong> [Nama Kelompok / Kelas]</li>
+                <li><strong>Platform:</strong> Web Browser Standalone (100% Offline-Ready & Client-Side WebGL)</li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Tangkapan layar lanskap peternakan penuh dari sudut pandang tinggi (*Birds-Eye Diorama*) yang memperlihatkan keseluruhan lumbung merah, silo logam, dan jalan raya. Logo/Judul besar di tengah dengan tipografi modern.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Selamat pagi/siang bapak/ibu dosen dan teman-teman sekalian. Hari ini kami akan mempresentasikan proyek game 3D berbasis web berjudul 'Farm Industry 3D' yang kami kembangkan untuk tugas mata kuliah Interaksi Manusia dan Komputer Semester 5. Fokus utama proyek ini adalah bagaimana menerapkan prinsip-prinsip desain antarmuka dan interaksi yang ramah pengguna dalam lingkungan simulasi 3 dimensi."
+        </div>
+    </div>
+
+    <!-- SLIDE 2 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 02 / 19</span>
+            <h3 class="slide-title-main">TIM PENGEMBANG & PEMBAGIAN TUGAS (JOB DESK)</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-name">1. [Nama Anggota 1 & NIM]</div>
+                    <div class="team-role">Project Leader & UI/UX Interaction Designer</div>
+                    <div class="team-desc">
+                        • Desain Top HUD Glassmorphism & palet pastel<br>
+                        • Desain alur interaksi & sistem modal 2-tab ransel<br>
+                        • Pemetaan prinsip IMK & 10 Heuristik Usability Nielsen<br>
+                        • Pengujian kegunaan (*usability testing*) antarmuka
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-name">2. [Nama Anggota 2 & NIM]</div>
+                    <div class="team-role">3D Engine & Core Interaction Developer</div>
+                    <div class="team-desc">
+                        • Pengaturan Three.js WebGL & scene management (`3d_game.js`)<br>
+                        • Dynamic Dual-Camera System (lerp Diorama ⇄ FPV)<br>
+                        • Skema kontrol multimodal (WASD, V, E, Spasi, mouse 360°)<br>
+                        • Pencahayaan UE5 tone mapping & bayangan PCF
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-name">3. [Nama Anggota 3 & NIM]</div>
+                    <div class="team-role">3D Modeling & Procedural Graphics Specialist</div>
+                    <div class="team-desc">
+                        • Pemodelan 3D arsitektur peternakan & mesin pabrik (`3d_models.js`)<br>
+                        • Pemodelan hewan ternak & animasi AI (ayam, sapi, domba)<br>
+                        • Generator tekstur PBR prosedural kanvas (`textures.js`)<br>
+                        • Optimasi geometri mesh untuk stabil 60 FPS
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-name">4. [Nama Anggota 4 & NIM]</div>
+                    <div class="team-role">Game Economy, Systems & Audio Engineer</div>
+                    <div class="team-desc">
+                        • Manajemen state ekonomi, level/XP & inventaris (`state.js`)<br>
+                        • Sistem armada pengantar (6 level) & kalkulasi omzet<br>
+                        • Sistem Misi Harian & Offline Progress (LocalStorage)<br>
+                        • Synthesizer efek suara prosedural Web Audio API (`audio.js`)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Layout grid 4 kolom/kartu rapi. Setiap anggota dilengkapi avatar kartun karakter peternak (Kakek, Gadis, Wanita, Pemuda), nama, NIM, jabatan, dan poin tanggung jawabnya.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Sebelum membedah game ini lebih dalam, perkenankan kami memperkenalkan anggota tim dan pembagian tugasnya. Kami membagi proyek ini ke dalam empat fokus: perancangan UI/UX antarmuka, rekayasa engine 3D dan kamera, pemodelan aset 3D dan tekstur prosedural, serta pengelolaan logika ekonomi dan audio synthesizer."
+        </div>
+    </div>
+
+    <!-- SLIDE 3 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 03 / 19</span>
+            <h3 class="slide-title-main">DEFINISI & PENGENALAN GAME</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>Definisi Game:</strong> Game simulasi industri peternakan (*Farming Tycoon / Idle Industrial Simulator*) 3 Dimensi berbasis web.</li>
+                <li><strong>Inspirasi Alur:</strong> Mengadaptasi logika dan siklus industri dari game Roblox terkenal <code>[🏭] Farm Industry</code> karya Arazy Verse.</li>
+                <li><strong>Estetika Visual:</strong> Mengusung visual fotorealistis terinspirasi dari <strong>Unreal Engine 5</strong> (pencahayaan global, bayangan lembut, dan tekstur material alami).</li>
+                <li><strong>Tujuan Permainan:</strong> Membimbing pemain mengembangkan peternakan dari modal kecil (1 ayam) menuju konglomerasi industri agribisnis mandiri yang maju.</li>
+                <li><strong>Keunggulan Teknis:</strong> Berjalan 100% pada peramban web (*Client-Side WebGL*), bebas dependensi internet, dan dapat dimainkan secara offline.</li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Tampilan area peternakan utama yang menampakkan kontras lumbung merah pedesaan, tabung silo galvanis, dan jalan raya aspal dengan pencahayaan hangat sore hari (*golden hour*).
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Secara definisi, Farm Industry 3D adalah game simulasi agribisnis di mana pemain mengelola rantai industri pertanian secara mandiri. Kami mengadaptasi alur dari game Farm Industry di Roblox, namun menghadirkannya langsung di peramban web dengan tampilan visual fotorealistis ala Unreal Engine 5 tanpa perlu koneksi internet."
+        </div>
+    </div>
+
+    <!-- SLIDE 4 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 04 / 19</span>
+            <h3 class="slide-title-main">ALUR UTAMA PERMAINAN (CORE GAMEPLAY LOOP)</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>1. Panen (Harvest):</strong> Kumpulkan bahan mentah yang dihasilkan hewan di kandang (telur, susu, wol) menggunakan radius magnet panen otomatis.</li>
+                <li><strong>2. Olah di Pabrik (Process):</strong> Setorkan bahan mentah ke mesin pabrik untuk melipatgandakan nilai jualnya hingga 4-5 kali lipat.</li>
+                <li><strong>3. Muat Armada (Load Cargo):</strong> Pindahkan produk olahan jadi ke dalam kendaraan ekspedisi di dermaga pengiriman peternakan.</li>
+                <li><strong>4. Ekspedisi Pasar (Ship & Sell):</strong> Berangkatkan armada ke pasar kota untuk menerima omzet uang tunai (*Cash*) dan XP level.</li>
+                <li><strong>5. Reinvestasi & Upgrade:</strong> Gunakan keuntungan modal untuk membeli hewan baru, menambah mesin, memperbesar ransel, dan meng-upgrade armada pengantar.</li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Diagram siklus melingkar 5 tahapan berurutan lengkap dengan panah alur dan ikon bahan: Panen ➔ Olah Mesin ➔ Muat Truk ➔ Kirim/Omzet ➔ Upgrade.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Inti gameplay membentuk siklus ekonomi yang berulang: Pemain memanen hasil ternak, mengolahnya di pabrik untuk menaikkan harga produk, memuatnya ke kendaraan ekspedisi, lalu menjualnya ke kota. Uang yang didapat diputar kembali untuk ekspansi peternakan."
+        </div>
+    </div>
+
+    <!-- SLIDE 5 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 05 / 19</span>
+            <h3 class="slide-title-main">HEWAN 1 — PETERNAKAN AYAM & PENGOLAHAN TELUR</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>Status:</strong> Hewan awal permainan (*Starter Animal*), tersedia langsung sejak detik pertama.</li>
+                <li><strong>Perilaku & Animasi AI:</strong> Ayam putih berkeliaran di kandang panggung dengan animasi mematuk tanah (*pecking AI*) dan bertelur secara otomatis.</li>
+                <li><strong>Bahan Mentah:</strong> 🥚 <strong>Telur Ayam</strong> (Harga Jual Mentah: <span class="highlight-badge">Rp 5 / butir</span>)</li>
+                <li><strong>Mesin Pengolah:</strong> 🏭 <strong>Egg Mixer Vat</strong> (Tangki Pengaduk Telur & Corong Saus Otomatis | Durasi Olah: 3 detik)</li>
+                <li><strong>Produk Industri Jadi:</strong> 🥫 <strong>Mayones Kemasan</strong> (Harga Jual Olahan: <span class="highlight-badge">Rp 20 / kemasan</span>)</li>
+                <li><strong>Margin Keuntungan Ekonomi:</strong> Peningkatan nilai tambah sebesar <strong>4x lipat (400%)!</strong></li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Gambar split-screen: sisi kiri menampilkan kandang ayam 3D beserta ayam putihnya, sisi kanan menampilkan mesin Egg Mixer Vat serta ikon perubahan Telur ➔ Mayones.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Hewan pertama adalah Ayam Ternak sebagai modal awal pemain. Ayam menghasilkan telur seharga 5 rupiah. Namun jika dimasukkan ke mesin Egg Mixer selama 3 detik, telur akan diolah menjadi Mayones seharga 20 rupiah. Artinya, pemain mendapatkan keuntungan empat kali lipat dibanding menjual bahan mentah secara langsung."
+        </div>
+    </div>
+
+    <!-- SLIDE 6 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 06 / 19</span>
+            <h3 class="slide-title-main">HEWAN 2 — SAPI PERAH & INDUSTRI PENGOLAHAN KEJU</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>Status:</strong> Terbuka pada Level 2 (Dapat dibeli seharga Rp 150 di toko ekspansi peternakan).</li>
+                <li><strong>Perilaku & Animasi AI:</strong> Sapi perah ras Holstein hitam-putih dengan animasi merumput (*grazing AI*), mengibas ekor, dan memproduksi susu segar.</li>
+                <li><strong>Bahan Mentah:</strong> 🥛 <strong>Susu Segar Murni</strong> (Harga Jual Mentah: <span class="highlight-badge">Rp 10 / botol</span>)</li>
+                <li><strong>Mesin Pengolah:</strong> 🏭 <strong>Cast-Iron Cheese Press</strong> (Mesin Kempa & Pengepres Keju Hidrolik | Durasi Olah: 3 detik)</li>
+                <li><strong>Produk Industri Jadi:</strong> 🧀 <strong>Balok Keju Padat</strong> (Harga Jual Olahan: <span class="highlight-badge">Rp 45 / balok</span>)</li>
+                <li><strong>Margin Keuntungan Ekonomi:</strong> Peningkatan nilai tambah sebesar <strong>4,5x lipat (450%)!</strong></li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Foto sapi perah 3D dengan corak belang realistis di area padang rumput, berdampingan dengan foto mesin pres keju hidrolik dan balok keju kuning.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Memasuki level 2, pemain dapat membuka Sapi Perah. Susu segar memiliki harga dasar 10 rupiah. Ketika dibawa ke mesin Cheese Press hidrolik, susu dipadatkan menjadi balok keju bernilai 45 rupiah. Peningkatan omzet sebesar 4,5 kali lipat ini mendorong pemain untuk terus mengembangkan kapasitas produksinya."
+        </div>
+    </div>
+
+    <!-- SLIDE 7 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 07 / 19</span>
+            <h3 class="slide-title-main">HEWAN 3 — DOMBA WOL & INDUSTRI TEKSTIL PREMIUM</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>Status:</strong> Hewan industri premium tingkat lanjut / Level 3 (Dapat dibeli seharga Rp 300).</li>
+                <li><strong>Perilaku & Animasi AI:</strong> Domba ras Hampshire dengan gumpalan wol lebat berundak dan animasi merunduk mencari makan di padang rumput.</li>
+                <li><strong>Bahan Mentah:</strong> 🧶 <strong>Gumpalan Wol Mentah</strong> (Harga Jual Mentah: <span class="highlight-badge">Rp 18 / bundel</span>)</li>
+                <li><strong>Mesin Pengolah:</strong> 🏭 <strong>Antique Textile Loom</strong> (Rangka Alat Tenun Kayu Walnut & Roda Pemintal Benang | Durasi: 3 detik)</li>
+                <li><strong>Produk Industri Jadi:</strong> 🧵 <strong>Gulungan Benang & Kain Halus</strong> (Harga Jual Olahan: <span class="highlight-badge">Rp 85 / gulung</span>)</li>
+                <li><strong>Margin Keuntungan Ekonomi:</strong> Peningkatan omzet tertinggi, yaitu <strong>hampir 5x lipat (~472%)!</strong></li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Foto domba wol berbulu tebal di padang hijau di sisi kiri, dan foto mesin pemintal tenun kayu (*loom*) lengkap dengan gulungan benang ungu di sisi kanan.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Hewan ketiga adalah Domba Wol Hampshire yang merepresentasikan industri tekstil di level 3. Wol mentah seharga 18 rupiah ditenun menggunakan mesin Antique Textile Loom menjadi benang dan kain halus seharga 85 rupiah. Ini adalah komoditas olahan dengan nilai jual satuan tertinggi di peternakan."
+        </div>
+    </div>
+
+    <!-- SLIDE 8 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 08 / 19</span>
+            <h3 class="slide-title-main">PERSONALISASI: 4 PILIHAN KARAKTER PETERNAK</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>Personalisasi Identitas:</strong> Pemain menginput Nama Peternak & Nama Lahan di awal permainan (*Player & Farm Identity*).</li>
+                <li><strong>1. 🌾 Kakek Petani Bijak (Wise Grandpa):</strong> Berpengalaman tinggi merawat tanah; membawa <em>Garpu Rumput Legendaris</em>.</li>
+                <li><strong>2. 🌻 Gadis Petani Ceria (Cheerful Girl):**</strong> Ramah dan membawa kehangatan di kebun; membawa <em>Sekop Kebun Bunga</em>.</li>
+                <li><strong>3. 🧺 Petani Wanita Mandiri (Independent Woman):**</strong> Cekatan dan sangat teliti mengelola hasil bumi; membawa <em>Keranjang Panen Tradisional</em>.</li>
+                <li><strong>4. 🌱 Pemuda Bersemangat (Energetic Boy):**</strong> Penuh energi menyambut fajar agribisnis baru; membawa alat <em>Cangkul & Gembor Air</em>.</li>
+                <li><strong>Nilai IMK (Emotional Design):</strong> Memberikan rasa kepemilikan (*sense of ownership*) dan ikatan emosional pengguna terhadap peternakan yang dibangun.</li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Tangkapan layar antarmuka modal pembuatan karakter ("Selamat Datang di Green Valley") yang memperlihatkan ke-4 kartu avatar berdampingan secara simetris.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Sebelum mulai, pemain disambut layar onboarding untuk memilih avatar dan menamai peternakan mereka. Ada 4 pilihan karakter unik: Kakek Bijak, Gadis Ceria, Wanita Mandiri, dan Pemuda Bersemangat. Dalam teori IMK, personalisasi awal ini penting untuk menciptakan keterikatan emosional antara pengguna dan sistem."
+        </div>
+    </div>
+
+    <!-- SLIDE 9 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 09 / 19</span>
+            <h3 class="slide-title-main">TAMPILAN HUD MODERN & MANAJEMEN INVENTARIS</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>Top HUD Ergonomis (Glassmorphism & Pastel Badges):</strong>
+                    <ul>
+                        <li><em>Badge Tingkat:</em> Level peternak & bilah progres XP ungu transparan.</li>
+                        <li><em>Badge Saldo:</em> Indikator uang tunai ($) dengan tombol cepat belanja <code>+</code>.</li>
+                        <li><em>Badge Prestasi & Misi:</em> Bintang Prestasi (⭐) & hitung mundur pembaruan misi harian.</li>
+                        <li><em>Badge Kapasitas:</em> Status Ransel (<code>0/10</code>) & Muatan Truk (<code>0/6</code>) + tombol <code>BUKA</code>.</li>
+                        <li><em>Floating Action Menu:</em> Tombol aksi cepat melayang (Misi, Toko, Kamera, Audio, Panduan, Reset).</li>
+                    </ul>
+                </li>
+                <li><strong>Modal Inventaris 2-Tab Interaktif (<code>#inventoryModal</code>):</strong>
+                    <ul>
+                        <li><strong>Tab Ransel:</strong> Memantau isi tas bahan mentah/olahan, bar kapasitas %, total nilai jual, dan tombol <em>"Muat Semua ke Truk"</em>.</li>
+                        <li><strong>Tab Armada:</strong> Memantau kapasitas muatan armada aktif, estimasi omzet ekspedisi, dan tombol cepat <em>"Berangkatkan Armada"</em>.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Tangkapan layar bilah Top HUD di bagian atas layar dan tampilan modal pop-up Ransel/Inventaris yang menampilkan grid barang dan bilah kapasitas.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Antarmuka Top HUD kami rancang dengan gaya glassmorphism agar informasi vital seperti uang, level, dan kapasitas ransel terlihat jelas tanpa menghalangi visual 3D. Saat tombol ransel ditekan, muncul jendela inventaris dengan dua tab yang memudahkan pemain memisahkan manajemen isi tas dan muatan kendaraan."
+        </div>
+    </div>
+
+    <!-- SLIDE 10 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 10 / 19</span>
+            <h3 class="slide-title-main">SISTEM DUAL-CAMERA & KONTROL MULTIMODAL</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>🎥 Dynamic Dual-Camera System:</strong>
+                    <ul>
+                        <li><strong>Mode 1: Birds-Eye Diorama (Sudut Tinggi, FOV 40°):</strong> Tinjauan isometrik untuk memantau tata kelola lumbung, mesin, dan hewan secara menyeluruh layaknya miniatur foto.</li>
+                        <li><strong>Mode 2: First-Person POV (Mata Petani, FOV 76°):</strong> Pandangan orang pertama setinggi 1.65 meter untuk merasakan kemegahan fisik bangunan dan hewan dari dekat.</li>
+                        <li><strong>Seamless Interpolation (Lerp):</strong> Kamera meluncur secara interpolatif tanpa patah-patah, dilengkapi reticle crosshair dan toast alert status kamera.</li>
+                    </ul>
+                </li>
+                <li><strong>🎮 Skema Kontrol yang Responsif:</strong>
+                    <ul>
+                        <li><code>W</code> <code>A</code> <code>S</code> <code>D</code> / Tombol Panah: Navigasi berjalan.</li>
+                        <li>Tombol <code>V</code> atau <code>C</code>: Beralih mode kamera secara instan.</li>
+                        <li>Tombol <code>E</code>: Aksi interaksi cepat / ambil bahan.</li>
+                        <li>Tombol <code>Spasi</code>: Keberangkatan armada ekspedisi.</li>
+                        <li>Drag Mouse: Menoleh 360° pada mode FPV / klik lantai tujuan.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Perbandingan gambar sudut pandang Diorama (atas) dan First-Person POV (bawah) serta diagram ikon tombol keyboard kontrol.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Sistem kamera ganda memberikan fleksibilitas tinggi. Pemain dapat memantau peternakan dari atas dalam mode Diorama, lalu menekan tombol V untuk menyelam ke sudut pandang orang pertama (FPV). Transisinya kami buat menggunakan interpolasi lerp agar halus dan tidak menyebabkan pusing atau disorientasi visual."
+        </div>
+    </div>
+
+    <!-- SLIDE 11 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 11 / 19</span>
+            <h3 class="slide-title-main">AFFORDANCE, SIGNIFIERS & FEEDBACK SISTEM</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>Interactive Floor Pads (Zona Lantai Berpendar 3D):</strong>
+                    Lingkaran cahaya 3D berdenyut dengan label jelas: <strong><code>SETOR</code></strong> (masukkan bahan mentah), <strong><code>AMBIL</code></strong> (ambil produk jadi), <strong><code>MUAT TRUK</code></strong>, dan <strong><code>KIRIM TRUK</code></strong>.
+                </li>
+                <li><strong>Radius Magnet Panen Otomatis:</strong>
+                    Bahan mentah (telur, susu, wol) di lantai kandang langsung tersedot ke ransel saat pemain mendekat dalam radius interaksi.
+                </li>
+                <li><strong>Roblox-Style Floating Prompt:</strong>
+                    Widget interaksi dinamis mengambang <code>[E] Ambil Telur</code> / <code>[E] Buka Mesin</code> saat berada dalam jangkauan objek.
+                </li>
+                <li><strong>Dual Instant Feedback:</strong>
+                    <ul>
+                        <li><em>Visual:</em> Teks angka melayang <code>+$20</code>, bar progres 3D di atas mesin saat mengolah, dan warna reticle yang responsif.</li>
+                        <li><em>Audio:</em> Umpan balik suara unik seketika untuk setiap aksi panen, pengolahan, dan transaksi.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Foto close-up lingkaran pad SETOR & AMBIL di depan mesin pabrik serta prompt interaksi huruf [E] Ambil Telur.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Penerapan prinsip interaksi terlihat dari 'Affordance' dan 'Signifiers'. Pemain tidak perlu membaca buku panduan tebal karena lingkaran bercahaya di lantai dan prompt huruf 'E' mengambang langsung memandu pemain ke mana harus berdiri dan tombol apa yang harus ditekan. Semua aksi langsung memicu umpan balik visual dan suara secara instan."
+        </div>
+    </div>
+
+    <!-- SLIDE 12 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 12 / 19</span>
+            <h3 class="slide-title-main">RANTAI LOGISTIK: 6 TINGKAT EVOLUSI KENDARAAN</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>Progresi Kendaraan Pengantar (Meningkatkan Muatan & Kecepatan):</strong>
+                    <ul>
+                        <li><em>Level 1:</em> <strong>Sepeda Onthel Keranjang</strong> (Kapasitas: 6 | Waktu: 45 detik | Multiplier: 1.0x)</li>
+                        <li><em>Level 2:</em> <strong>Sepeda Motor Gerobak</strong> (Kapasitas: 12 | Waktu: 31 detik | Multiplier: 1.25x)</li>
+                        <li><em>Level 3:</em> <strong>Kendaraan Niaga Roda Tiga</strong> (Kapasitas: 20 | Waktu: 23 detik | Multiplier: 1.55x)</li>
+                        <li><em>Level 4:</em> <strong>Mobil Pikap Serbaguna</strong> (Kapasitas: 32 | Waktu: 17 detik | Multiplier: 1.9x)</li>
+                        <li><em>Level 5:</em> <strong>Truk Sedang Pagar Kayu</strong> (Kapasitas: 48 | Waktu: 13 detik | Multiplier: 2.35x)</li>
+                        <li><em>Level 6:</em> <strong>Truk Kontainer Logistik</strong> (Kapasitas: 75 | Waktu: 9 detik kilat! | Multiplier: 3.2x)</li>
+                    </ul>
+                </li>
+                <li><strong>Simulasi Perjalanan Nyata:</strong> Kendaraan berjalan keluar gerbang melintasi aspal, berhenti 5 detik di kota untuk bongkar muatan, membunyikan klakson, lalu kembali membawa limpahan uang.</li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Foto truk saat melaju di jalan aspal menuju kota dengan muatan kotak kargo di baknya.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Pada sistem distribusi, kami merancang perkembangan armada berjenjang 6 tingkat. Dimulai dari Sepeda Onthel yang lambat dan bermuatan sedikit, pemain dapat meningkatkannya hingga menjadi Truk Kontainer Logistik berkecepatan tinggi dengan kapasitas 75 barang dan bonus pengganda laba 3,2 kali lipat."
+        </div>
+    </div>
+
+    <!-- SLIDE 13 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 13 / 19</span>
+            <h3 class="slide-title-main">TOKO UPGRADE, HEWAN, & KANDANG DINAMIS</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>🏪 Toko Upgrade Pertanian (<code>#shopModal</code>):</strong>
+                    <ul>
+                        <li><em>Kapasitas Ransel (Backpack):</em> Diperbesar dari 10 hingga 90 slot barang.</li>
+                        <li><em>Kecepatan Jalan Karakter:</em> Ditingkatkan bertahap agar lebih lincah saat panen dan setor.</li>
+                        <li><em>Nutrisi Pakan (Pet Care):</em> Mempercepat tempo hewan menghasilkan bahan panen.</li>
+                        <li><em>Efisiensi Mesin Pabrik:</em> Mempercepat proses produksi mayones, keju, dan kain.</li>
+                    </ul>
+                </li>
+                <li><strong>🐾 Toko Hewan / Gerobak Pedagang (<code>#animalShopModal</code>):</strong>
+                    Membeli hewan tambahan dan membuka kandang sapi serta padang domba.
+                </li>
+                <li><strong>Sistem Kandang Ayam Adaptif (Expandable Coops):</strong>
+                    Kandang ayam bertambah otomatis secara visual: 1–4 ekor (1 kandang), 5–8 ekor (2 kandang), hingga 9–12 ekor (3 kandang panggung megah).
+                </li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Tangkapan layar jendela Toko Upgrade dan foto beberapa kandang ayam panggung yang bertambah di peternakan.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Pemain dapat menginvestasikan uangnya di dua toko: Toko Upgrade untuk meningkatkan kapasitas tas, kecepatan lari, dan efisiensi mesin; serta Toko Hewan untuk membeli ternak baru. Jumlah kandang ayam di peternakan juga adaptif, di mana kandang baru akan dibangun secara otomatis saat populasi ayam bertambah."
+        </div>
+    </div>
+
+    <!-- SLIDE 14 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 14 / 19</span>
+            <h3 class="slide-title-main">GAMIFIKASI: PAPAN MISI & PRODUKSI OFFLINE</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>📜 Papan Misi Interaktif (Quest GUI Plakat Kayu):</strong>
+                    <ul>
+                        <li><em>Kategori:</em> Tab Misi Harian (*Daily*) & Misi Mingguan (*Weekly*).</li>
+                        <li><em>Countdown Timer:</em> Waktu mundur 24 jam menuju penyegaran misi baru secara otomatis.</li>
+                        <li><em>Sistem Akumulatif Ramah Pemain:</em> Menyelesaikan misi cukup dengan mengumpulkan barang tanpa memotong stok inventaris pemain!</li>
+                        <li><em>Hadiah:</em> Uang Tunai, XP Level, dan Bintang Prestasi (⭐).</li>
+                    </ul>
+                </li>
+                <li><strong>💤 Produksi Saat Offline (*Idle Earnings*):</strong>
+                    Sistem mencatat waktu penutupan browser (*timestamp LocalStorage*). Saat pemain kembali, modal "Selamat Datang Kembali" muncul dan menghitung otomatis hasil panen telur, susu, dan wol yang terkumpul selama pemain tidak aktif.
+                </li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Tangkapan layar jendela plakat kayu Misi Harian dan popup sambutan "Selamat Datang Kembali" dengan rincian hasil panen.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Elemen retensi pengguna didukung oleh papan misi harian dan mingguan. Yang menarik, sistem misi kami bersifat akumulatif sehingga tidak mengurangi barang pemain. Kami juga menyematkan fitur offline progression: saat browser ditutup, ternak tetap berproduksi dan hasilnya dapat diklaim begitu pemain membuka game kembali."
+        </div>
+    </div>
+
+    <!-- SLIDE 15 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 15 / 19</span>
+            <h3 class="slide-title-main">DINAMIKA DUNIA: SERIGALA VS ANJING PENJAGA</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>🐺 Ancaman Serigala Hutan (*Wolf Threat AI*):</strong>
+                    Setiap 45 detik, seekor serigala buas keluar dari perbatasan hutan cemara menuju kandang untuk mencoba memangsa hewan ternak. Memberikan elemen urgensi, kewaspadaan, dan tantangan bagi pemain.
+                </li>
+                <li><strong>🐕 Pertahanan: Anjing Penjaga Peternakan (*Guard Dog*):</strong>
+                    Pemain dapat membeli anjing penjaga terlatih seharga Rp 200 di toko upgrade.
+                </li>
+                <li><strong>AI Pertahanan Mandiri:</strong>
+                    Anjing berpatroli santai dengan ekor mengibas; saat mendeteksi serigala, anjing akan langsung berlari cepat mengejar, menggonggong, dan mengusir serigala keluar area peternakan.
+                </li>
+                <li><strong>Nilai IMK:</strong> Menghilangkan stres pemain melalui otomasi sistem keamanan (*automation & peace of mind*).</li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Foto anjing penjaga berotot di dekat lumbung padi dan model serigala di pinggir hutan cemara.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Peternakan tidak hanya damai, tetapi memiliki dinamika tantangan. Setiap 45 detik ada serigala yang mencoba menyusup dari hutan. Namun, pemain tidak dibebani keharusan memukul serigala secara manual; mereka cukup membeli Anjing Penjaga yang secara cerdas akan mengejar dan mengusir serigala secara otomatis."
+        </div>
+    </div>
+
+    <!-- SLIDE 16 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 16 / 19</span>
+            <h3 class="slide-title-main">TEKNOLOGI GRAFIS: THREE.JS & TEKSTUR PBR PROSEDURAL</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>Mesin Rendering 3D (Three.js WebGL):</strong>
+                    <ul>
+                        <li><em>ACES Filmic Tone Mapping:</em> Memberikan kedalaman warna dan kontras tinggi setara Unreal Engine 5.</li>
+                        <li><em>Directional Sunlight & Soft PCF Shadows (2048x2048):</em> Bayangan matahari sore yang lembut dan dinamis.</li>
+                        <li><em>Hemisphere Global Illumination:</em> Pantulan cahaya alami antara langit biru dan permukaan tanah.</li>
+                    </ul>
+                </li>
+                <li><strong>Generator Tekstur PBR Prosedural Off-Screen (<code>textures.js</code>):</strong>
+                    Seluruh tekstur digambar secara matematis saat runtime via HTML5 Canvas tanpa memuat file gambar luar:
+                    kayu lapuk lumbung merah, pelat baja seng berkarat, aspal jalan agregat kerikil, dan genteng batu sabak.
+                </li>
+                <li><strong>Keunggulan:</strong> 100% Zero External Image Dependency & Bebas Kendala Eror CORS!</li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Perbandingan tekstur kayu gudang merah dan tabung silo baja berkarat hasil olahan kode prosedural kanvas.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Dari sisi grafis, seluruh tampilan 3D diproses menggunakan Three.js WebGL. Yang unik, tekstur kayu lapuk, aspal jalan, dan seng silo berkarat tidak diambil dari internet, melainkan digambar secara matematis saat runtime menggunakan procedural canvas. Hal ini membuat game sangat ringan dan bebas dari kendala CORS."
+        </div>
+    </div>
+
+    <!-- SLIDE 17 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 17 / 19</span>
+            <h3 class="slide-title-main">TEKNOLOGI AUDIO: SINTESIS SUARA PROSEDURAL (WEB AUDIO)</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>Inovasi Web Audio API Prosedural (<code>audio.js</code>):</strong>
+                    Game tidak memuat satu pun file audio fisik (<code>.mp3</code> atau <code>.wav</code>). Semua efek suara dibangkitkan langsung dari osilator gelombang frekuensi (sine, triangle, square, saw-tooth) dan modulasi filter gain envelope.
+                </li>
+                <li><strong>Variasi Efek Suara Interaktif:</strong>
+                    <ul>
+                        <li>💰 <em>Koin Berdenting:</em> Suara arpeggio nada tinggi saat menerima pembayaran uang.</li>
+                        <li>🥚 <em>Petik Panen:</em> Suara pop lembut saat telur, susu, atau wol masuk ke ransel.</li>
+                        <li>⚙️ <em>Mesin Pabrik:</em> Suara deru mekanik berputar saat mengolah bahan.</li>
+                        <li>🚚 <em>Klakson Armada:</em> Klakson khas kendaraan ekspedisi saat berangkat dan kembali.</li>
+                        <li>🐕 <em>Gonggongan Anjing & Lolongan Serigala:</em> Simulasi audio peringatan bahaya.</li>
+                    </ul>
+                </li>
+                <li><strong>Keunggulan IMK:</strong> Respons audio seketika tanpa jeda buffering (Zero Latency Audio).</li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Ilustrasi gelombang frekuensi audio berdampingan dengan ikon koin, mesin pabrik, dan klakson truk pengantar.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Tidak hanya grafisnya yang prosedural, aspek audionya pun menggunakan Web Audio API murni tanpa file MP3 eksternal. Kami memprogram osilator nada untuk menghasilkan suara gemerincing koin, dengung mesin, dan klakson truk secara langsung. Ini menghasilkan respons suara seketika tanpa jeda buffering."
+        </div>
+    </div>
+
+    <!-- SLIDE 18 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 18 / 19</span>
+            <h3 class="slide-title-main">PENERAPAN 10 HEURISTIK USABILITY (JAKOB NIELSEN)</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <div class="heuristics-list">
+                <div class="heuristic-item"><span class="heuristic-num">1. Visibility of System Status:</span> Status XP, uang, kapasitas ransel, dan muatan truk real-time pada HUD.</div>
+                <div class="heuristic-item"><span class="heuristic-num">2. Match with Real World:</span> Metafora peternakan nyata (ayam bertelur, susu diolah jadi keju, barang dikirim via truk).</div>
+                <div class="heuristic-item"><span class="heuristic-num">3. User Control & Freedom:</span> Bebas ganti kamera (V), tombol tutup modal (X), dan opsi reset progres data.</div>
+                <div class="heuristic-item"><span class="heuristic-num">4. Consistency & Standards:</span> Kontrol standar gaming (WASD, Spasi, E) dan ikonografi universal (🎒, 💰, ⭐).</div>
+                <div class="heuristic-item"><span class="heuristic-num">5. Error Prevention:</span> Peringatan saat kapasitas tas penuh agar panen tidak terbuang; dialog konfirmasi reset.</div>
+                <div class="heuristic-item"><span class="heuristic-num">6. Recognition vs Recall:</span> Resep pengolahan mesin dan daftar inventaris tertera transparan tanpa perlu dihafal.</div>
+                <div class="heuristic-item"><span class="heuristic-num">7. Flexibility & Efficiency:</span> Tombol pintas keyboard bagi pengguna mahir dan tombol GUI layar bagi pemula.</div>
+                <div class="heuristic-item"><span class="heuristic-num">8. Aesthetic & Minimalist:</span> Tampilan glassmorphism bersih yang tidak menutupi keindahan lingkungan 3D.</div>
+                <div class="heuristic-item"><span class="heuristic-num">9. Recognize & Recover Errors:</span> Pesan toast informatif saat kendaraan sedang berangkat atau kapasitas penuh.</div>
+                <div class="heuristic-item"><span class="heuristic-num">10. Help & Documentation:</span> Modal panduan lengkap "💡 Panduan Cara Bermain" dapat diakses setiap saat via tombol ❓.</div>
+            </div>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Tabel matriks atau diagram 10 Heuristik Usability Nielsen dengan tanda centang hijau di setiap poinnya.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Sebagai fokus utama mata kuliah IMK, kami menguji game ini terhadap 10 Heuristik Usability Jakob Nielsen. Seluruh aspek—mulai dari kejelasan status di HUD, kesesuaian metafora dunia nyata, pencegahan eror kapasitas tas, hingga tersedianya panduan interaktif—telah kami penuhi untuk memastikan pengalaman bermain yang memuaskan."
+        </div>
+    </div>
+
+    <!-- SLIDE 19 -->
+    <div class="slide-card">
+        <div class="slide-header">
+            <span class="slide-number-pill">SLIDE 19 / 19</span>
+            <h3 class="slide-title-main">KESIMPULAN & SESI LIVE DEMONSTRATION</h3>
+        </div>
+        <div class="section-label">Konten Teks Slide</div>
+        <div class="content-box">
+            <ul>
+                <li><strong>Kesimpulan Proyek:</strong>
+                    <ul>
+                        <li>Berhasil memadukan simulasi industri 3D fotorealistis dengan prinsip-prinsip desain interaksi manusia dan komputer.</li>
+                        <li>Mengimplementasikan sistem zero-dependency (grafis PBR prosedural & audio sintetis) yang ringan dan dapat dimainkan 100% offline.</li>
+                        <li>Antarmuka terbukti intuitif, nyaman dinavigasi dengan kamera ganda, dan memberikan kepuasan umpan balik (*rewarding feedback*).</li>
+                    </ul>
+                </li>
+                <li><strong>Sesi Live Gameplay Demonstration:</strong> Memperagakan alur pembuatan karakter, panen ayam, pengolahan mayones, dan pengiriman armada truk ke kota secara langsung.</li>
+                <li><strong>Terima Kasih! / Sesi Tanya Jawab (Q&A)</strong></li>
+            </ul>
+        </div>
+        <div class="section-label">Saran Visual & Layout Slide</div>
+        <div class="visual-box">
+            <strong>Rekomendasi Visual:</strong> Tampilan browser yang siap dimainkan langsung (*ready-to-play*) di layar proyektor untuk demonstrasi ke dosen penguji.
+        </div>
+        <div class="section-label">Catatan Pembicara (Speaker Notes)</div>
+        <div class="notes-box">
+            "Sebagai penutup, proyek Farm Industry 3D ini membuktikan bahwa lingkungan grafis 3D dapat dihadirkan secara ringan di peramban web dan tetap ramah pengguna berkat penerapan prinsip IMK yang tepat. Sekarang kami akan mendemonstrasikan permainannya secara langsung di hadapan bapak/ibu dosen dan rekan-rekan. Terima kasih atas perhatiannya, dan kami membuka sesi tanya jawab."
+        </div>
+    </div>
+
+    <div class="footer-note">
+        Dokumen Materi Lengkap Presentasi PPT • Farm Industry 3D (IMK Edition) • Mata Kuliah Interaksi Manusia dan Komputer (Semester 5)
+    </div>
+
+</body>
+</html>

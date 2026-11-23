@@ -107,8 +107,8 @@
             <div>
                 🎮 <strong>Kontrol:</strong> 
                 <span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span> atau <span class="kbd">Panah</span> jalan | 
-                <span class="kbd">V</span> Ganti Kamera (Diorama ⇄ First-Person POV) | 
-                <strong>Tarik Mouse</strong> tengok sekeliling (FPV) / klik tanah tujuan
+                <span class="kbd">V</span> Ganti Kamera (Diorama ⇄ Third-Person ⇄ First-Person POV) | 
+                <strong>Tarik Mouse</strong> tengok sekeliling (FPV/3rd) / klik tanah tujuan
             </div>
             <div>
                 <span class="kbd">E</span> Aksi Cepat | <span class="kbd">Spasi</span> Kirim Truk
@@ -129,42 +129,387 @@
         </div>
     </div>
 
-    <!-- MODAL 2: PANDUAN CARA BERMAIN (HOW TO PLAY) -->
+    <!-- MODAL 2: PANDUAN CARA BERMAIN (HOW TO PLAY & ENCYCLOPEDIA) -->
     <div class="modal-overlay hidden" id="howToPlayModal">
         <div class="modal-box">
-            <div class="modal-header">
-                <h2>💡 Panduan Alur Siklus Farm Industry 3D</h2>
+            <div class="guide-modal-header modal-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 1.6rem;">📖</span>
+                    <div>
+                        <h2 style="margin: 0; font-size: 1.22rem; color: #F8FAFC; font-weight: 800;">Buku Panduan & Pedoman Sukses Peternak</h2>
+                        <p style="margin: 2px 0 0; font-size: 0.8rem; color: #94A3B8;">Pelajari alur siklus bisnis, perawatan ternak, mesin pabrik, ekspedisi armada, dan tips cuan maksimal!</p>
+                    </div>
+                </div>
                 <button class="btn-close close-modal">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="shop-card">
-                    <div class="shop-card-info">
-                        <h4>1. 🐔 Panen Hasil Hewan Ternak 3D</h4>
-                        <p>Hewan akan secara otomatis menghasilkan bahan mentah di tanah (Ayam ➔ 🥚 Telur, Sapi ➔ 🥛 Susu, Domba ➔ 🧶 Wol). Dekati untuk menariknya dengan magnet panen ke ransel.</p>
+
+            <!-- Tab Navigasi Buku Panduan -->
+            <div class="guide-nav-bar">
+                <button class="guide-nav-btn active" data-target="guideFlow">
+                    <span>🔄</span> Alur Siklus
+                </button>
+                <button class="guide-nav-btn" data-target="guideAnimals">
+                    <span>🐔</span> Ternak & Kandang
+                </button>
+                <button class="guide-nav-btn" data-target="guideFactory">
+                    <span>🏭</span> Pabrik & Harga
+                </button>
+                <button class="guide-nav-btn" data-target="guideFleet">
+                    <span>🚚</span> Garasi & Armada
+                </button>
+                <button class="guide-nav-btn" data-target="guideControls">
+                    <span>🎮</span> Kontrol & Tips
+                </button>
+            </div>
+
+            <div class="modal-body" style="padding: 16px 20px; max-height: 65vh; overflow-y: auto;">
+                <!-- TAB 1: ALUR SIKLUS UTAMA -->
+                <div id="guideFlow" class="guide-tab-pane">
+                    <!-- Ribbon Ringkasan Siklus -->
+                    <div class="guide-flow-ribbon">
+                        <div class="guide-ribbon-item">
+                            <span style="font-size:1.3rem;">🧺</span>
+                            <span>1. Panen Mentah</span>
+                        </div>
+                        <span class="guide-ribbon-arrow">➔</span>
+                        <div class="guide-ribbon-item">
+                            <span style="font-size:1.3rem;">⚙️</span>
+                            <span>2. Olah di Pabrik</span>
+                        </div>
+                        <span class="guide-ribbon-arrow">➔</span>
+                        <div class="guide-ribbon-item">
+                            <span style="font-size:1.3rem;">📦</span>
+                            <span>3. Muat ke Truk</span>
+                        </div>
+                        <span class="guide-ribbon-arrow">➔</span>
+                        <div class="guide-ribbon-item">
+                            <span style="font-size:1.3rem;">🚀</span>
+                            <span>4. Ekspedisi Kota</span>
+                        </div>
+                        <span class="guide-ribbon-arrow">➔</span>
+                        <div class="guide-ribbon-item">
+                            <span style="font-size:1.3rem;">💰</span>
+                            <span>5. Cuan & Upgrade</span>
+                        </div>
+                    </div>
+
+                    <!-- 5 Kartu Langkah Detail -->
+                    <div class="guide-flow-container">
+                        <div class="guide-step-card">
+                            <div class="guide-step-num">1</div>
+                            <div class="guide-step-body">
+                                <div class="guide-step-title">🧺 Panen Bahan Mentah dari Hewan Ternak 3D</div>
+                                <p class="guide-step-text">Hewan ternak Anda secara otomatis menghasilkan bahan mentah di area kandangnya (<strong>Ayam ➔ 🥚 Telur</strong> setiap 5 detik, <strong>Sapi ➔ 🥛 Susu</strong> setiap 8 detik, <strong>Domba ➔ 🧶 Wol</strong> setiap 11 detik). Cukup berjalan mendekat; fitur <em>Harvest Magnet</em> otomatis menarik panen masuk ke ransel Anda.</p>
+                            </div>
+                        </div>
+
+                        <div class="guide-step-card">
+                            <div class="guide-step-num">2</div>
+                            <div class="guide-step-body">
+                                <div class="guide-step-title">⚙️ Olah di Mesin Pabrik Industri (Keuntungan Berlipat!)</div>
+                                <p class="guide-step-text">Jangan langsung menjual bahan mentah! Bawa hasil panen ke mesin pabrik di halaman tengah. Berdiri di lingkaran emas <strong>SETOR</strong> di depan mesin untuk memprosesnya hanya dalam <strong>3 detik</strong>. Ambil hasilnya di lingkaran toska <strong>AMBIL</strong>. Mayones, Keju, dan Kain memberikan margin keuntungan <strong>+300% hingga +370%</strong>!</p>
+                            </div>
+                        </div>
+
+                        <div class="guide-step-card">
+                            <div class="guide-step-num">3</div>
+                            <div class="guide-step-body">
+                                <div class="guide-step-title">📦 Muat Hasil Produksi ke Armada Pengantar</div>
+                                <p class="guide-step-text">Bawa produk bernilai tinggi ke area <strong>Garasi Pengantaran (Delivery Garage)</strong> di samping kanan Silo. Berdiri di lingkaran emas <strong>MUAT TRUK</strong> di samping driveway, atau buka menu Ransel di pojok atas lalu klik tombol <em>"Muat ke Armada"</em>.</p>
+                            </div>
+                        </div>
+
+                        <div class="guide-step-card">
+                            <div class="guide-step-num">4</div>
+                            <div class="guide-step-body">
+                                <div class="guide-step-title">🚀 Berangkatkan Ekspedisi Pengiriman ke Kota</div>
+                                <p class="guide-step-text">Berdiri di lingkaran toska <strong>KIRIM TRUK</strong> di mulut jalan garasi, atau cukup tekan tombol <strong>Spasi</strong> di keyboard dari mana saja! Kendaraan melaju keluar garasi, menyusuri jalan raya aspal ke ujung peta utara, berhenti selama <strong>5 detik</strong> untuk bongkar muatan di kota, lalu berputar balik dan kembali masuk ke garasi.</p>
+                            </div>
+                        </div>
+
+                        <div class="guide-step-card">
+                            <div class="guide-step-num">5</div>
+                            <div class="guide-step-body">
+                                <div class="guide-step-title">💰 Dapatkan Uang Tunai & Reinvestasi Upgrade</div>
+                                <p class="guide-step-text">Begitu armada tiba kembali di garasi, gelontoran uang tunai langsung masuk ke saldo Anda disertai efek koin emas. Gunakan uang tersebut untuk upgrade kapasitas ransel, percepat mesin pabrik, buka kandang sapi & domba, serta upgrade armada ke tingkat kendaraan yang lebih kencang!</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="shop-card">
-                    <div class="shop-card-info">
-                        <h4>2. 🏭 Olah di Mesin Pabrik 3D</h4>
-                        <p>Berdiri di atas lingkaran <strong>SETOR</strong> di depan mesin untuk memproses bahan mentah menjadi barang bernilai tinggi (🥫 Mayones, 🧀 Keju, 🧵 Kain). Ambil hasilnya di lingkaran <strong>AMBIL</strong>!</p>
+
+                <!-- TAB 2: TERNAK & KANDANG -->
+                <div id="guideAnimals" class="guide-tab-pane hidden">
+                    <div class="guide-card">
+                        <div class="guide-card-header">
+                            <div class="guide-card-title">🐔 Kandang Ayam Petelur & Rumah Panggung Dinamis</div>
+                            <span class="guide-badge guide-badge-green">Kandang Starter Gratis</span>
+                        </div>
+                        <p class="guide-card-desc">Kandang ayam sudah terbuka sejak awal permainan. Dilengkapi sistem <strong>Rumah Ayam Panggung (Elevated Chicken Coop)</strong> dengan kapasitas 4 ekor per rumah dan berkembang otomatis:</p>
+                        <div style="background: rgba(15, 23, 42, 0.5); padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; color: #CBD5E1;">
+                            <ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px;">
+                                <li><strong>1 - 4 Ekor Ayam:</strong> 1 Rumah Ayam Panggung aktif di halaman belakang kandang.</li>
+                                <li><strong>5 - 8 Ekor Ayam:</strong> <strong>Rumah Panggung ke-2</strong> otomatis muncul berdampingan di peternakan!</li>
+                                <li><strong>9 - 12 Ekor Ayam:</strong> <strong>Rumah Panggung ke-3</strong> otomatis muncul melengkapi kapasitas maksimal 12 ayam!</li>
+                            </ul>
+                        </div>
+                        <p class="guide-card-desc" style="font-size: 0.82rem; color: #94A3B8;"><strong>Posisi Alami 4 Ayam per Rumah:</strong> Ayam 1 mengerami telur di kotak sarang samping (nesting box), Ayam 2 bersiap di tangga kayu (ramp), Ayam 3 mematuk tanah di bawah kolong panggung, dan Ayam 4 mencari makan di depan keset kain 'EGGS'.</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #334155; padding-top: 8px; font-size: 0.84rem;">
+                            <span>⏱️ Produksi: <strong>Telur (5 Detik)</strong></span>
+                            <span>💵 Harga Bibit: <strong>Rp 25</strong> (Maks 12 Ekor)</span>
+                        </div>
+                    </div>
+
+                    <div class="guide-card">
+                        <div class="guide-card-header">
+                            <div class="guide-card-title">🐄 Kandang Sapi Perah Holstein (Dairy Cow Paddock)</div>
+                            <span class="guide-badge guide-badge-blue">Buka di Toko Upgrade (Rp 150)</span>
+                        </div>
+                        <p class="guide-card-desc">Paddock luas di sebelah depan kandang ayam. Menampung hingga 8 ekor sapi perah. Sapi berkumpul secara alami di tempat makan kayu panjang (<em>Feeding Trough</em>) untuk mengunyah rumput hijau segar dan menghasilkan susu murni.</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #334155; padding-top: 8px; font-size: 0.84rem;">
+                            <span>⏱️ Produksi: <strong>Susu Segar (8 Detik)</strong></span>
+                            <span>💵 Harga Bibit: <strong>Rp 55</strong> (Maks 8 Ekor)</span>
+                        </div>
+                    </div>
+
+                    <div class="guide-card">
+                        <div class="guide-card-header">
+                            <div class="guide-card-title">🐑 Padang Domba Wol (Wool Sheep Pasture)</div>
+                            <span class="guide-badge guide-badge-purple">Buka di Toko Upgrade (Rp 300)</span>
+                        </div>
+                        <p class="guide-card-desc">Padang rumput berpagar putih di sisi utara peternakan. Menampung hingga 8 ekor domba berbulu tebal. Domba mengunyah jerami kering di palung pakan dan menghasilkan wol berkualitas tinggi yang bernilai ekonomi tinggi.</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #334155; padding-top: 8px; font-size: 0.84rem;">
+                            <span>⏱️ Produksi: <strong>Wol Tebal (11 Detik)</strong></span>
+                            <span>💵 Harga Bibit: <strong>Rp 85</strong> (Maks 8 Ekor)</span>
+                        </div>
+                    </div>
+
+                    <div class="guide-highlight-box">
+                        🐾 <strong>Lokasi Toko Hewan:</strong> Kunjungi gerobak berkanopi garis merah-putih di depan kandang ayam (x = -6.5, z = 4.5) untuk membeli bibit hewan baru kapan saja!
                     </div>
                 </div>
-                <div class="shop-card">
-                    <div class="shop-card-info">
-                        <h4>3. 🚚 Muat ke Truk 3D & Kirim Ekspedisi</h4>
-                        <p>Berdiri di lingkaran <strong>MUAT TRUK 📦</strong> untuk memindahkan muatan ke bak truk. Lalu berdiri di <strong>KIRIM TRUK 🚀</strong> atau tekan Spasi untuk memberangkatkan truk dan dapatkan gelontoran uang tunai!</p>
+
+                <!-- TAB 3: PABRIK & NILAI JUAL -->
+                <div id="guideFactory" class="guide-tab-pane hidden">
+                    <div class="guide-card">
+                        <div class="guide-card-header">
+                            <div class="guide-card-title">🏭 Tabel Komparasi Nilai Jual: Mentah vs Olahan</div>
+                            <span class="guide-badge guide-badge-gold">Margin Untung s.d. +370%</span>
+                        </div>
+                        <table class="guide-table">
+                            <thead>
+                                <tr>
+                                    <th>Bahan Mentah</th>
+                                    <th>Mesin Pengolah</th>
+                                    <th>Produk Jadi Olahan</th>
+                                    <th>Harga Jual</th>
+                                    <th>Keuntungan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>🥚 Telur (Rp 5)</td>
+                                    <td>🥫 Mayones Vat (3s)</td>
+                                    <td><strong>🥫 Mayones Kemasan</strong></td>
+                                    <td><strong style="color:#4ADE80;">Rp 20</strong></td>
+                                    <td><span class="guide-badge guide-badge-green">+300%</span></td>
+                                </tr>
+                                <tr>
+                                    <td>🥛 Susu (Rp 10)</td>
+                                    <td>🧀 Cheese Press (3s)</td>
+                                    <td><strong>🧀 Keju Batang Murni</strong></td>
+                                    <td><strong style="color:#4ADE80;">Rp 45</strong></td>
+                                    <td><span class="guide-badge guide-badge-green">+350%</span></td>
+                                </tr>
+                                <tr>
+                                    <td>🧶 Wol (Rp 18)</td>
+                                    <td>🧵 Loom Weaver (3s)</td>
+                                    <td><strong>🧵 Benang / Kain Tenun</strong></td>
+                                    <td><strong style="color:#4ADE80;">Rp 85</strong></td>
+                                    <td><span class="guide-badge guide-badge-green">+370%</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="guide-card">
+                        <div class="guide-card-header">
+                            <div class="guide-card-title">💡 Cara Mengoperasikan Mesin Pabrik 3D</div>
+                        </div>
+                        <p class="guide-card-desc">Setiap mesin pabrik industri di halaman peternakan dilengkapi dua lingkaran penanda denyut interaktif:</p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div style="background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 8px; padding: 10px;">
+                                <strong style="color: #FACC15;">🟡 Lingkaran SETOR (Deposit):</strong>
+                                <p style="font-size: 0.82rem; color: #E2E8F0; margin: 4px 0 0;">Berdiri di depan corong mesin untuk memasukkan bahan mentah dari ransel ke antrean mesin secara otomatis.</p>
+                            </div>
+                            <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px; padding: 10px;">
+                                <strong style="color: #4ADE80;">🟢 Lingkaran AMBIL (Pickup):</strong>
+                                <p style="font-size: 0.82rem; color: #E2E8F0; margin: 4px 0 0;">Berdiri di samping mesin untuk mengambil produk olahan yang sudah selesai diproses langsung ke dalam ransel.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="guide-highlight-box">
+                        ⚡ <strong>Upgrade Kecepatan Mesin:</strong> Di Toko Upgrade, Anda dapat meningkatkan kecepatan mesin pabrik hingga berkecepatan 2.5x lipat dan kapasitas antrean tampung hingga 25 bahan mentah sekaligus!
                     </div>
                 </div>
-                <div class="shop-card special-card">
-                    <div class="shop-card-info">
-                        <h4>4. 💤 Produksi Saat Offline</h4>
-                        <p>Game ini tetap menghitung hasil produksi ternak Anda saat browser ditutup. Begitu Anda kembali, hasil panen langsung menanti!</p>
+
+                <!-- TAB 4: GARASI & ARMADA -->
+                <div id="guideFleet" class="guide-tab-pane hidden">
+                    <div class="guide-card">
+                        <div class="guide-card-header">
+                            <div class="guide-card-title">🏠 Garasi Pengantaran & Jalur Akses Driveway</div>
+                            <span class="guide-badge guide-badge-blue">Logistics Hub</span>
+                        </div>
+                        <p class="guide-card-desc">Bangunan Garasi Pengantaran (<em>Delivery Garage</em>) berdiri tegak lurus di sebelah kanan Silo (x = 6.0, z = -12.5). Dilengkapi gerbang terbuka bertuliskan <strong>"PENGANTARAN / DELIVERY"</strong> yang menghadap langsung ke jalan raya timur melalui jalur akses aspal driveway.</p>
+                        <p class="guide-card-desc" style="font-size: 0.82rem; color: #94A3B8;">Saat tidak sedang mengantar, kendaraan standby terparkir rapi di dalam garasi di atas lantai beton dengan penerangan lampu plafon. Di samping garasi terdapat area kargo berpagar kayu yang menampung tumpukan peti dan drum pasokan.</p>
+                    </div>
+
+                    <div class="guide-card">
+                        <div class="guide-card-header">
+                            <div class="guide-card-title">🚚 6 Tingkatan Kendaraan Ekspedisi Peternakan</div>
+                            <span class="guide-badge guide-badge-gold">Bonus s.d. 3.20x Nilai Jual</span>
+                        </div>
+                        <table class="guide-table">
+                            <thead>
+                                <tr>
+                                    <th>Level & Kendaraan</th>
+                                    <th>Kapasitas</th>
+                                    <th>Bonus Harga</th>
+                                    <th>Durasi Perjalanan</th>
+                                    <th>Biaya Upgrade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>🚲 <strong>Lv 1: Sepeda Onthel</strong></td>
+                                    <td>6 Item</td>
+                                    <td>1.00x</td>
+                                    <td>45s (20s + 5s + 20s)</td>
+                                    <td><span style="color:#4ADE80;">Starter Gratis</span></td>
+                                </tr>
+                                <tr>
+                                    <td>🛵 <strong>Lv 2: Motor Gerobak</strong></td>
+                                    <td>12 Item</td>
+                                    <td>1.25x (+25%)</td>
+                                    <td>31s (13s + 5s + 13s)</td>
+                                    <td>Rp 120</td>
+                                </tr>
+                                <tr>
+                                    <td>🛺 <strong>Lv 3: Niaga Roda Tiga</strong></td>
+                                    <td>20 Item</td>
+                                    <td>1.55x (+55%)</td>
+                                    <td>23s (9s + 5s + 9s)</td>
+                                    <td>Rp 280</td>
+                                </tr>
+                                <tr>
+                                    <td>🛻 <strong>Lv 4: Pikap Serbaguna</strong></td>
+                                    <td>32 Item</td>
+                                    <td>1.90x (+90%)</td>
+                                    <td>17s (6s + 5s + 6s)</td>
+                                    <td>Rp 600</td>
+                                </tr>
+                                <tr>
+                                    <td>🚚 <strong>Lv 5: Truk Sedang Kayu</strong></td>
+                                    <td>48 Item</td>
+                                    <td>2.35x (+135%)</td>
+                                    <td>13s (4s + 5s + 4s)</td>
+                                    <td>Rp 1.250</td>
+                                </tr>
+                                <tr>
+                                    <td>🚛 <strong>Lv 6: Kontainer Ekspedisi</strong></td>
+                                    <td>75 Item</td>
+                                    <td><strong style="color:#FACC15;">3.20x (+220%)</strong></td>
+                                    <td><strong style="color:#38BDF8;">9s (2s + 5s + 2s)</strong></td>
+                                    <td>Rp 2.800</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="guide-highlight-box">
+                        🏞️ <strong>Pameran Kendaraan Menanjak di Bukit:</strong> Anda dapat melihat seluruh fisik 3D tingkatan armada berjejer menanjak di atas jalan bukit pameran sisi timur jalan raya (x = 42). Dekati lingkaran interaktif di depan tiap kendaraan untuk mengecek statistik langsung!
                     </div>
                 </div>
-                <div style="display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap;">
-                    <button class="btn btn-primary close-modal" style="flex: 1; min-width: 140px;">Siap Bermain!</button>
-                    <button class="btn btn-warning" id="btnResetGameProgress" style="background: #E53935; color: #FFF; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer;">🔄 Mulai Peternakan dari Awal (Reset)</button>
+
+                <!-- TAB 5: KONTROL & TIPS -->
+                <div id="guideControls" class="guide-tab-pane hidden">
+                    <div class="guide-card">
+                        <div class="guide-card-header">
+                            <div class="guide-card-title">🎮 Pintasan Kontrol Keyboard & Navigasi</div>
+                        </div>
+                        <table class="guide-table">
+                            <thead>
+                                <tr>
+                                    <th>Tombol / Aksi</th>
+                                    <th>Fungsi Utama</th>
+                                    <th>Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><kbd class="guide-key">W</kbd> <kbd class="guide-key">A</kbd> <kbd class="guide-key">S</kbd> <kbd class="guide-key">D</kbd> / Panah</td>
+                                    <td>Gerak Karakter</td>
+                                    <td>Berjalan dan berlari mengelilingi seluruh penjuru peternakan.</td>
+                                </tr>
+                                <tr>
+                                    <td><kbd class="guide-key">E</kbd></td>
+                                    <td>Aksi Cepat / Interaksi</td>
+                                    <td>Ambil panen manual satu per satu atau interaksi cepat dengan stasiun terdekat.</td>
+                                </tr>
+                                <tr>
+                                    <td><kbd class="guide-key">Spasi</kbd> / Tombol 🚀</td>
+                                    <td>Kirim Truk Instan</td>
+                                    <td>Memberangkatkan armada pengantar langsung dari mana saja tanpa perlu berjalan ke garasi.</td>
+                                </tr>
+                                <tr>
+                                    <td><kbd class="guide-key">V</kbd> atau <kbd class="guide-key">C</kbd></td>
+                                    <td>Ganti Mode Kamera</td>
+                                    <td>Beralih mulus antara <strong>Diorama Isometrik 3D</strong> ⇄ <strong>First-Person POV 360°</strong>.</td>
+                                </tr>
+                                <tr>
+                                    <td>🖱️ Klik Kiri di Tanah</td>
+                                    <td>Click-to-Move</td>
+                                    <td>Karakter peternak akan otomatis berjalan menuju titik lokasi tanah yang diklik.</td>
+                                </tr>
+                                <tr>
+                                    <td>🖱️ Tarik / Drag Mouse</td>
+                                    <td>Tengok Kamera Bebas</td>
+                                    <td>Pada mode First-Person POV, gerakkan mouse untuk menoleh bebas 360 derajat.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="guide-card">
+                        <div class="guide-card-header">
+                            <div class="guide-card-title">💡 4 Tips Emas Menjadi Juragan Peternakan Terkaya</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.86rem; color: #CBD5E1;">
+                            <div style="padding: 8px 12px; background: rgba(15, 23, 42, 0.5); border-radius: 8px;">
+                                <strong>1. Selalu Olah Bahan Mentah:</strong> Jangan tergesa-gesa menjual telur mentah (Rp 5). Olah jadi Mayones (Rp 20) untuk laba 4x lipat dalam hitungan detik!
+                            </div>
+                            <div style="padding: 8px 12px; background: rgba(15, 23, 42, 0.5); border-radius: 8px;">
+                                <strong>2. Prioritaskan Ransel & Sepatu Cepat:</strong> Tingkatkan kapasitas ransel di Toko Upgrade agar muat membawa banyak panen dan mesin tanpa sering bolak-balik.
+                            </div>
+                            <div style="padding: 8px 12px; background: rgba(15, 23, 42, 0.5); border-radius: 8px;">
+                                <strong>3. Kerjakan Papan Misi Harian:</strong> Papan misi di depan Silo hitam menyediakan bonus koin kas besar dan XP untuk menaikkan Tingkat Peternak Anda.
+                            </div>
+                            <div style="padding: 8px 12px; background: rgba(15, 23, 42, 0.5); border-radius: 8px;">
+                                <strong>4. Manfaatkan Hasil Panen Offline:</strong> Saat Anda menutup browser, ternak tetap berproduksi. Buka game kembali untuk memanen tumpukan telur, susu, dan wol gratis!
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; background: #1E293B; border-top: 2px solid #334155; flex-wrap: wrap; gap: 10px;">
+                <button class="btn btn-warning" id="btnResetGameProgress" style="background: rgba(239, 68, 68, 0.15); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.4); padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;">
+                    🔄 Mulai Peternakan dari Awal (Reset)
+                </button>
+                <button class="btn btn-primary close-modal" style="background: linear-gradient(135deg, #10B981, #059669); color: #FFF; border: none; padding: 10px 28px; border-radius: 10px; font-weight: 800; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);">
+                    Siap Bermain! 🚜
+                </button>
             </div>
         </div>
     </div>

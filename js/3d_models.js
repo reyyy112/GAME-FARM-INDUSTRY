@@ -855,13 +855,23 @@ class ModelBuilder3D {
         });
 
         // Telinga Jatuh Lembut (Floppy Ears)
+        const earL = new THREE.Group();
+        const earR = new THREE.Group();
         [-1, 1].forEach(side => {
+            const earGrp = (side === -1) ? earL : earR;
+            earGrp.position.set(side * 0.18, 0.25, 0.1);
             const ear = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.22, 0.12), furDark);
             ear.rotation.set(0.15, 0, side * 0.25);
-            ear.position.set(side * 0.18, 0.25, 0.1);
             ear.castShadow = true;
-            headGroup.add(ear);
+            earGrp.add(ear);
+            headGroup.add(earGrp);
         });
+
+        // Lidah Menggemaskan (Playful Panting Tongue)
+        const tongue = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.02, 0.12), getMat(0xFF6B81, 0.7, 0.1));
+        tongue.position.set(0, 0.11, 0.35);
+        tongue.rotation.x = 0.2;
+        headGroup.add(tongue);
 
         torsoGroup.add(headGroup);
         root.add(torsoGroup);
@@ -894,7 +904,7 @@ class ModelBuilder3D {
         tailGroup.add(tail);
         root.add(tailGroup);
 
-        root.userData = { tailGroup, headGroup };
+        root.userData = { tailGroup, headGroup, torsoGroup, earL, earR, tongue };
         return root;
     }
 
@@ -1663,14 +1673,19 @@ class ModelBuilder3D {
         torsoGroup.add(breast);
 
         // Sepasang Sayap Berbulu Rapat Berlapis (Folded Layered Wings)
+        const wingL = new THREE.Group();
+        const wingR = new THREE.Group();
         [-1, 1].forEach(side => {
             const wingGeo = new THREE.SphereGeometry(0.25 * scale, 12, 10);
             wingGeo.scale(0.22, 0.88, 1.25);
             const wing = new THREE.Mesh(wingGeo, henFeatherMat);
-            wing.position.set(side * 0.28 * scale, 0.06 * scale, 0.02 * scale);
+            wing.position.set(0, 0, 0);
             wing.rotation.set(-0.25, side * 0.08, side * 0.12);
             wing.castShadow = true;
-            torsoGroup.add(wing);
+            const wingGrp = (side === -1) ? wingL : wingR;
+            wingGrp.position.set(side * 0.28 * scale, 0.06 * scale, 0.02 * scale);
+            wingGrp.add(wing);
+            torsoGroup.add(wingGrp);
         });
 
         // Ekor Khas Ayam Betina Mencuat ke Atas (Upturned Layered Tail Fan)
@@ -1779,15 +1794,20 @@ class ModelBuilder3D {
             root.add(leg);
         });
 
-        root.userData = { headGroup, leftLeg, rightLeg, nestGroup, type: "chicken", variant };
+        root.userData = { headGroup, leftLeg, rightLeg, wingL, wingR, tailFan, combGroup, torsoGroup, nestGroup, type: "chicken", variant };
         return root;
     }
 
     // 2. SAPI PERAH HOLSTEIN 3D REALISTIS SESUAI GAMBAR REFERENSI (media_1794442594422_5a831357.jpg)
-    // - Sapi perah belang hitam-putih dengan proporsi tubuh padat
-    // - Kepala bertanduk kecil, moncong merah muda, dan ambing susu berputing
-    // - Ember susu kayu berisi susu putih segar di atas tumpukan jerami
-    // - Ukuran LEBIH BESAR dari karakter pemain (panjang ~2.75m, tinggi bahu ~1.65m)
+    // - Sapi perah belang hitam-putih dengan proporsi tubuh padat & lekuk tubuh anatomis alami
+    // - Punuk bahu (withers), tulang pinggul (hook & pin bones), dan perut bulat khas sapi perah
+    // - Kepala baji organik dengan mahkota bulu putih keriting (poll tuft) di antara tanduk
+    // - Moncong rosy pink lembut dengan lubang hidung gelap, tanduk melengkung gading-slate
+    // - Telinga berlapisan dalam pink yang fleksibel dapat mengibas lalat
+    // - Kaki depan berotot dengan sendi lutut, kaki belakang dengan sendi tumit hock menekuk alami
+    // - Kuku belah hitam mengkilap (cloven hooves) dengan celah kuku & dewclaws
+    // - Ambing susu montok rosy pink berputing 4 di bawah perut belakang
+    // - Ekor lentur menjuntai dengan rumbai bulu hitam lebat (bushy tail tassel)
     static createCow() {
         const root = new THREE.Group();
         root.name = "realisticCow";
@@ -1796,179 +1816,380 @@ class ModelBuilder3D {
         const coatWhite = getMat(0xFBFBFA, 0.8, 0.0);
         const coatBlack = getMat(0x1A1D20, 0.82, 0.0);
         const muzzlePink = getMat(0xF7B5B5, 0.72, 0.0);
+        const innerEarPink = getMat(0xF5B7B7, 0.85, 0.0);
         const udderPink = getMat(0xF4A8A8, 0.8, 0.0);
         const teatPink = getMat(0xDE8686, 0.8, 0.0);
-        const hornCream = getMat(0xEAD8B5, 0.5, 0.1);
-        const hornTip = getMat(0x3E3832, 0.6, 0.1);
+        const hornCream = getMat(0xEDE3D0, 0.5, 0.1);
+        const hornTip = getMat(0x3A332C, 0.6, 0.1);
         const hoofDark = getMat(0x1F1F1F, 0.7, 0.1);
+        const eyeDark = getMat(0x111111, 0.2, 0.3);
 
-        // Skala Sapi diperbesar agar LEBIH BESAR dari karakter pemain (Tinggi bahu ~1.65m, Panjang ~2.75m)
         const scale = 1.38;
 
-        // A. Badan Sapi Silinder Organik & Berotot (Muscular Barrel Torso)
+        // ==========================================
+        // A. BADAN & RANGKA ANATOMIS SAPI (ORGANIC BOVINE TORSO)
+        // ==========================================
         const torso = new THREE.Group();
         torso.position.set(0, 1.02 * scale, 0);
 
-        // Badan Utama Tekstur Kulit Belang Holstein
-        const barrelGeo = new THREE.CylinderGeometry(0.56 * scale, 0.60 * scale, 1.85 * scale, 16);
-        const bodyMesh = new THREE.Mesh(barrelGeo, hideMat);
-        bodyMesh.rotation.x = Math.PI / 2;
-        bodyMesh.castShadow = true;
-        bodyMesh.receiveShadow = true;
-        torso.add(bodyMesh);
-
-        // Bahu & Dada Depan Bidang (Chest & Shoulders)
-        const chest = new THREE.Mesh(new THREE.SphereGeometry(0.52 * scale, 14, 12), hideMat);
-        chest.position.set(0, 0.06 * scale, 0.85 * scale);
+        // 1. Dada & Bahu Depan (Chest & Brisket)
+        const chest = new THREE.Mesh(new THREE.SphereGeometry(0.56 * scale, 16, 14), hideMat);
+        chest.scale.set(0.96, 1.14, 1.12);
+        chest.position.set(0, 0.06 * scale, 0.78 * scale);
         chest.castShadow = true;
+        chest.receiveShadow = true;
         torso.add(chest);
 
-        // Pinggul & Panggul Belakang Kokoh (Hindquarters)
-        const hips = new THREE.Mesh(new THREE.SphereGeometry(0.54 * scale, 14, 12), hideMat);
-        hips.position.set(0, 0.06 * scale, -0.85 * scale);
+        // 2. Punuk Bahu / Withers (Pundak Menonjol Khas Sapi Perah)
+        const withers = new THREE.Mesh(new THREE.SphereGeometry(0.38 * scale, 12, 10), hideMat);
+        withers.scale.set(0.72, 0.95, 1.25);
+        withers.position.set(0, 0.44 * scale, 0.65 * scale);
+        withers.castShadow = true;
+        torso.add(withers);
+
+        // 3. Gelambir Dada Bawah (Deep Brisket & Throat Dewlap)
+        const brisket = new THREE.Mesh(new THREE.CylinderGeometry(0.24 * scale, 0.38 * scale, 0.68 * scale, 10), coatWhite);
+        brisket.rotation.x = 0.42;
+        brisket.position.set(0, -0.34 * scale, 0.62 * scale);
+        torso.add(brisket);
+
+        // 4. Perut Bulat Montok / Rumen Tengah (Dairy Barrel Belly)
+        const bellyGeo = new THREE.CylinderGeometry(0.55 * scale, 0.58 * scale, 1.55 * scale, 16);
+        const bellyMesh = new THREE.Mesh(bellyGeo, hideMat);
+        bellyMesh.rotation.x = Math.PI / 2;
+        bellyMesh.scale.set(1.02, 1.15, 1.0);
+        bellyMesh.position.set(0, -0.02 * scale, 0.02 * scale);
+        bellyMesh.castShadow = true;
+        bellyMesh.receiveShadow = true;
+        torso.add(bellyMesh);
+
+        // Lengkungan Perut Samping yang Lembut (Curved Flanks)
+        const flankL = new THREE.Mesh(new THREE.SphereGeometry(0.54 * scale, 14, 12), hideMat);
+        flankL.scale.set(0.42, 1.05, 1.35);
+        flankL.position.set(-0.35 * scale, -0.05 * scale, 0.05 * scale);
+        const flankR = new THREE.Mesh(new THREE.SphereGeometry(0.54 * scale, 14, 12), hideMat);
+        flankR.scale.set(0.42, 1.05, 1.35);
+        flankR.position.set(0.35 * scale, -0.05 * scale, 0.05 * scale);
+        torso.add(flankL, flankR);
+
+        // 5. Pinggul & Panggul Belakang (Hindquarters, Hook & Pin Bones)
+        const hips = new THREE.Mesh(new THREE.SphereGeometry(0.55 * scale, 16, 14), hideMat);
+        hips.scale.set(0.98, 1.12, 1.16);
+        hips.position.set(0, 0.08 * scale, -0.78 * scale);
         hips.castShadow = true;
+        hips.receiveShadow = true;
         torso.add(hips);
 
-        // Corak Belang Hitam 3D Volumetrik Alami Holstein
-        const p1 = new THREE.Mesh(new THREE.SphereGeometry(0.44 * scale, 10, 8), coatBlack);
-        p1.scale.set(0.65, 0.95, 1.35);
-        p1.position.set(-0.38 * scale, 0.18 * scale, 0.12 * scale);
-        const p2 = new THREE.Mesh(new THREE.SphereGeometry(0.42 * scale, 10, 8), coatBlack);
-        p2.scale.set(0.65, 0.95, 1.2);
-        p2.position.set(0.38 * scale, 0.14 * scale, -0.38 * scale);
-        const p3 = new THREE.Mesh(new THREE.BoxGeometry(0.75 * scale, 0.22 * scale, 0.85 * scale), coatBlack);
-        p3.position.set(0, 0.52 * scale, 0.25 * scale);
-        const p4 = new THREE.Mesh(new THREE.SphereGeometry(0.38 * scale, 10, 8), coatBlack);
-        p4.position.set(-0.25 * scale, 0.18 * scale, -0.75 * scale);
-        torso.add(p1, p2, p3, p4);
+        // Tulang Pinggul / Hook Bones yang Sedikit Menjorok ke Samping
+        [-1, 1].forEach(side => {
+            const hookBone = new THREE.Mesh(new THREE.SphereGeometry(0.18 * scale, 8, 8), hideMat);
+            hookBone.scale.set(1.1, 0.6, 0.8);
+            hookBone.position.set(side * 0.48 * scale, 0.32 * scale, -0.62 * scale);
+            torso.add(hookBone);
 
-        // Ambing Susu Merah Muda Volumetrik di Bawah Perut Belakang (Volumetric Pink Udder)
-        const udder = new THREE.Mesh(new THREE.SphereGeometry(0.28 * scale, 12, 10), udderPink);
-        udder.scale.set(0.85, 0.78, 1.05);
-        udder.position.set(0, -0.42 * scale, -0.48 * scale);
-        udder.castShadow = true;
-        torso.add(udder);
-
-        // 4 Puting Susu (4 Teats)
-        [
-            [-0.10, -0.35], [0.10, -0.35],
-            [-0.10, -0.58], [0.10, -0.58]
-        ].forEach(([tx, tz]) => {
-            const teat = new THREE.Mesh(new THREE.CylinderGeometry(0.024 * scale, 0.018 * scale, 0.12 * scale, 6), teatPink);
-            teat.position.set(tx * scale, -0.62 * scale, tz * scale);
-            torso.add(teat);
+            // Tulang Duduk / Pin Bones dekat pangkal ekor
+            const pinBone = new THREE.Mesh(new THREE.SphereGeometry(0.14 * scale, 8, 8), hideMat);
+            pinBone.position.set(side * 0.28 * scale, 0.35 * scale, -1.18 * scale);
+            torso.add(pinBone);
         });
+
+        // 6. Corak Belang Hitam 3D Volumetrik Alami Holstein Sesuai Gambar Referensi
+        const patchBack = new THREE.Mesh(new THREE.SphereGeometry(0.52 * scale, 12, 10), coatBlack);
+        patchBack.scale.set(0.85, 0.95, 1.45);
+        patchBack.position.set(-0.24 * scale, 0.22 * scale, 0.15 * scale);
+        patchBack.castShadow = true;
+
+        const patchRight = new THREE.Mesh(new THREE.SphereGeometry(0.46 * scale, 12, 10), coatBlack);
+        patchRight.scale.set(0.72, 0.92, 1.3);
+        patchRight.position.set(0.32 * scale, 0.18 * scale, -0.25 * scale);
+
+        const patchRump = new THREE.Mesh(new THREE.SphereGeometry(0.48 * scale, 12, 10), coatBlack);
+        patchRump.scale.set(0.85, 0.95, 1.1);
+        patchRump.position.set(0.18 * scale, 0.25 * scale, -0.85 * scale);
+
+        const patchShoulderL = new THREE.Mesh(new THREE.SphereGeometry(0.38 * scale, 10, 8), coatBlack);
+        patchShoulderL.scale.set(0.65, 0.9, 1.1);
+        patchShoulderL.position.set(-0.35 * scale, 0.18 * scale, 0.72 * scale);
+
+        torso.add(patchBack, patchRight, patchRump, patchShoulderL);
+
+        // 7. Ambing Susu Montok Rosy Pink (Volumetric Pink Udder)
+        const udder = new THREE.Group();
+        udder.position.set(0, -0.38 * scale, -0.52 * scale);
+
+        const udderBody = new THREE.Mesh(new THREE.SphereGeometry(0.26 * scale, 14, 12), udderPink);
+        udderBody.scale.set(0.92, 0.85, 1.12);
+        udderBody.castShadow = true;
+        udder.add(udderBody);
+
+        // 4 Puting Susu Sejajar (4 Teats)
+        [
+            [-0.09, -0.06, 0.08],  [0.09, -0.06, 0.08],
+            [-0.08, -0.07, -0.10], [0.08, -0.07, -0.10]
+        ].forEach(([tx, ty, tz]) => {
+            const teat = new THREE.Mesh(new THREE.CylinderGeometry(0.022 * scale, 0.016 * scale, 0.11 * scale, 8), teatPink);
+            teat.position.set(tx * scale, ty * scale - 0.16 * scale, tz * scale);
+            teat.rotation.z = (tx < 0 ? 0.12 : -0.12);
+            udder.add(teat);
+        });
+        torso.add(udder);
 
         root.add(torso);
 
-        // B. Kepala Sapi Detail dengan Tanduk Kecil & Moncong Pink
+        // ==========================================
+        // B. KEPALA, TANDUK & MONCONG REALISTIS (ORGANIC BOVINE HEAD)
+        // ==========================================
         const headGroup = new THREE.Group();
-        headGroup.position.set(0, 0.38 * scale, 1.15 * scale);
+        headGroup.position.set(0, 0.42 * scale, 1.15 * scale);
 
-        // Leher Berotot Kuat Menghubungkan Bahu & Kepala
-        const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.32 * scale, 0.44 * scale, 0.65 * scale, 12), hideMat);
-        neck.rotation.x = 0.52;
-        neck.position.set(0, 0.14 * scale, -0.05 * scale);
+        // 1. Leher Berotot Kuat dengan Gelambir Halus (Muscular Arching Neck)
+        const neckGeo = new THREE.CylinderGeometry(0.32 * scale, 0.45 * scale, 0.72 * scale, 14);
+        const neck = new THREE.Mesh(neckGeo, hideMat);
+        neck.rotation.x = 0.54;
+        neck.position.set(0, 0.14 * scale, -0.08 * scale);
+        neck.castShadow = true;
         headGroup.add(neck);
 
-        // Tengkorak Kepala Sapi
-        const skull = new THREE.Mesh(new THREE.BoxGeometry(0.48 * scale, 0.46 * scale, 0.62 * scale), coatWhite);
-        skull.position.set(0, 0.38 * scale, 0.32 * scale);
-        skull.castShadow = true;
-        headGroup.add(skull);
+        // Gelambir leher (Dewlap fold under throat)
+        const dewlap = new THREE.Mesh(new THREE.BoxGeometry(0.12 * scale, 0.48 * scale, 0.52 * scale), coatWhite);
+        dewlap.rotation.x = 0.52;
+        dewlap.position.set(0, -0.12 * scale, -0.04 * scale);
+        headGroup.add(dewlap);
 
-        // Bercak Hitam di Sekitar Mata
+        // 2. Tengkorak Kepala Baji Organik (Sculpted Wedge Skull)
+        const skullGroup = new THREE.Group();
+        skullGroup.position.set(0, 0.36 * scale, 0.28 * scale);
+
+        // Mahkota dahi / Poll
+        const poll = new THREE.Mesh(new THREE.SphereGeometry(0.26 * scale, 14, 12), coatWhite);
+        poll.scale.set(1.05, 0.95, 1.25);
+        poll.position.set(0, 0.08 * scale, 0.02 * scale);
+        skullGroup.add(poll);
+
+        // Jembatan Hidung yang Melandai Menuju Moncong (Nasal Bridge)
+        const noseBridge = new THREE.Mesh(new THREE.CylinderGeometry(0.18 * scale, 0.24 * scale, 0.44 * scale, 10), coatWhite);
+        noseBridge.rotation.x = 0.88;
+        noseBridge.position.set(0, -0.04 * scale, 0.28 * scale);
+        skullGroup.add(noseBridge);
+
+        // Pipi & Rahang Bawah (Cheeks & Jowls)
         [-1, 1].forEach(side => {
-            const eyePatch = new THREE.Mesh(new THREE.SphereGeometry(0.18 * scale, 8, 8), coatBlack);
-            eyePatch.scale.set(0.4, 0.9, 0.9);
-            eyePatch.position.set(side * 0.22 * scale, 0.42 * scale, 0.36 * scale);
-            headGroup.add(eyePatch);
-
-            const eye = new THREE.Mesh(new THREE.SphereGeometry(0.045 * scale, 6, 6), getMat(0x111111));
-            eye.position.set(side * 0.25 * scale, 0.42 * scale, 0.38 * scale);
-            headGroup.add(eye);
+            const cheek = new THREE.Mesh(new THREE.SphereGeometry(0.19 * scale, 10, 8), coatBlack);
+            cheek.scale.set(0.55, 0.95, 1.15);
+            cheek.position.set(side * 0.20 * scale, -0.02 * scale, 0.12 * scale);
+            skullGroup.add(cheek);
         });
 
-        // Moncong Halus Merah Muda Lembut (Rosy Pink Muzzle)
-        const muzzle = new THREE.Mesh(new THREE.BoxGeometry(0.42 * scale, 0.30 * scale, 0.34 * scale), muzzlePink);
-        muzzle.position.set(0, 0.22 * scale, 0.68 * scale);
-        muzzle.castShadow = true;
+        // Mahkota Bulu Putih Keriting di Dahi Sesuai Foto Referensi (Curly Poll Tuft)
+        const tuftMat = getMat(0xFFFFFF, 0.95, 0.0);
+        [
+            [-0.08, 0.22, -0.04], [0.08, 0.22, -0.04],
+            [0.0, 0.24, 0.04], [0.0, 0.20, 0.14],
+            [-0.06, 0.18, 0.08], [0.06, 0.18, 0.08]
+        ].forEach(([tx, ty, tz]) => {
+            const curl = new THREE.Mesh(new THREE.DodecahedronGeometry(0.08 * scale, 1), tuftMat);
+            curl.position.set(tx * scale, ty * scale, tz * scale);
+            skullGroup.add(curl);
+        });
+
+        // 3. Mata Manik Hitam Lembut Sapi (Gentle Bovine Eyes with Highlights)
+        [-1, 1].forEach(side => {
+            const eyeSocket = new THREE.Group();
+            eyeSocket.position.set(side * 0.22 * scale, 0.05 * scale, 0.18 * scale);
+
+            const eye = new THREE.Mesh(new THREE.SphereGeometry(0.052 * scale, 10, 10), eyeDark);
+            const cornea = new THREE.Mesh(new THREE.SphereGeometry(0.016 * scale, 6, 6), getMat(0xFFFFFF));
+            cornea.position.set(side * 0.028 * scale, 0.022 * scale, 0.038 * scale);
+
+            eyeSocket.add(eye, cornea);
+            skullGroup.add(eyeSocket);
+        });
+
+        // 4. Moncong Rosy Pink & Bibir Sapi (Fleshy Pink Muzzle & Dark Nostrils)
+        const muzzle = new THREE.Group();
+        muzzle.position.set(0, 0.16 * scale, 0.72 * scale);
+
+        const muzzleMesh = new THREE.Mesh(new THREE.SphereGeometry(0.20 * scale, 14, 12), muzzlePink);
+        muzzleMesh.scale.set(1.12, 0.85, 1.15);
+        muzzleMesh.castShadow = true;
+        muzzle.add(muzzleMesh);
+
+        // Dagu / Rahang Bawah (Lower Jaw / Chin)
+        const chin = new THREE.Mesh(new THREE.BoxGeometry(0.28 * scale, 0.12 * scale, 0.24 * scale), muzzlePink);
+        chin.position.set(0, -0.12 * scale, -0.02 * scale);
+        muzzle.add(chin);
+
+        // Dua Lubang Hidung Hitam (Realistic Dark Nostrils)
+        [-1, 1].forEach(side => {
+            const nostril = new THREE.Mesh(new THREE.SphereGeometry(0.042 * scale, 8, 8), coatBlack);
+            nostril.scale.set(0.65, 1.15, 0.45);
+            nostril.position.set(side * 0.09 * scale, 0.02 * scale, 0.16 * scale);
+            muzzle.add(nostril);
+        });
         headGroup.add(muzzle);
+        headGroup.add(skullGroup);
 
-        // Lubang Hidung Hitam (Nostrils)
-        [-1, 1].forEach(side => {
-            const nostril = new THREE.Mesh(new THREE.SphereGeometry(0.035 * scale, 6, 6), coatBlack);
-            nostril.scale.set(0.6, 1.0, 0.4);
-            nostril.position.set(side * 0.11 * scale, 0.23 * scale, 0.85 * scale);
-            headGroup.add(nostril);
-        });
-
-        // Tanduk Kecil Melengkung (Small Curved Horns)
+        // 5. Tanduk Melengkung Anggun Gading-Slate (Elegant Curved Horns)
         [-1, 1].forEach(side => {
             const hornGroup = new THREE.Group();
-            hornGroup.position.set(side * 0.22 * scale, 0.64 * scale, 0.26 * scale);
+            hornGroup.position.set(side * 0.22 * scale, 0.58 * scale, 0.24 * scale);
 
-            const hornBase = new THREE.Mesh(new THREE.ConeGeometry(0.05 * scale, 0.22 * scale, 8), hornCream);
-            hornBase.rotation.set(-0.35, 0, side * 0.65);
-            hornBase.position.set(side * 0.08 * scale, 0.09 * scale, 0);
+            // Pangkal Tanduk Gading (Ivory Cream Base)
+            const hornBase = new THREE.Mesh(new THREE.ConeGeometry(0.055 * scale, 0.24 * scale, 10), hornCream);
+            hornBase.rotation.set(-0.32, 0, side * 0.68);
+            hornBase.position.set(side * 0.08 * scale, 0.08 * scale, 0);
 
-            const hornTipMesh = new THREE.Mesh(new THREE.ConeGeometry(0.03 * scale, 0.10 * scale, 8), hornTip);
-            hornTipMesh.rotation.set(-0.45, 0, side * 0.75);
-            hornTipMesh.position.set(side * 0.15 * scale, 0.18 * scale, 0.02 * scale);
+            // Ujung Tanduk Gelap Melengkung ke Dalam (Curved Dark Slate Tip)
+            const hornTipMesh = new THREE.Mesh(new THREE.ConeGeometry(0.034 * scale, 0.14 * scale, 10), hornTip);
+            hornTipMesh.rotation.set(-0.48, 0, side * 0.95);
+            hornTipMesh.position.set(side * 0.16 * scale, 0.19 * scale, 0.03 * scale);
 
             hornGroup.add(hornBase, hornTipMesh);
             headGroup.add(hornGroup);
         });
 
-        // Telinga Menyamping Lembut (Horizontal Bovine Ears)
+        // 6. Telinga Fleksibel dengan Lapisan Pink Dalam (Ears with Pink Lining)
+        const earL = new THREE.Group();
+        const earR = new THREE.Group();
         [-1, 1].forEach(side => {
-            const ear = new THREE.Mesh(new THREE.SphereGeometry(0.14 * scale, 8, 8), (side === -1 ? coatBlack : coatWhite));
-            ear.scale.set(1.4, 0.45, 0.6);
-            ear.position.set(side * 0.36 * scale, 0.48 * scale, 0.25 * scale);
-            ear.rotation.set(0.1, 0, side * -0.25);
-            headGroup.add(ear);
+            const earGrp = (side === -1) ? earL : earR;
+            earGrp.position.set(side * 0.32 * scale, 0.44 * scale, 0.20 * scale);
+
+            // Daun telinga luar (Outer hide)
+            const outerEar = new THREE.Mesh(new THREE.SphereGeometry(0.15 * scale, 10, 10), (side === -1 ? coatBlack : coatWhite));
+            outerEar.scale.set(1.45, 0.42, 0.65);
+            outerEar.rotation.set(0.12, 0, side * -0.28);
+            outerEar.castShadow = true;
+
+            // Lapisan merah muda bagian dalam telinga (Pink Inner Ear)
+            const innerEar = new THREE.Mesh(new THREE.SphereGeometry(0.12 * scale, 8, 8), innerEarPink);
+            innerEar.scale.set(1.25, 0.32, 0.48);
+            innerEar.position.set(0, -0.01 * scale, 0.02 * scale);
+            innerEar.rotation.set(0.12, 0, side * -0.28);
+
+            earGrp.add(outerEar, innerEar);
+            headGroup.add(earGrp);
         });
 
         torso.add(headGroup);
 
-        // C. 4 Kaki Kokoh dengan Kuku Belah Menapak di Tanah (Legs & Cloven Hooves)
-        const legFL = new THREE.Group(); legFL.position.set(-0.32 * scale, 0.50 * scale, 0.68 * scale);
-        const legFR = new THREE.Group(); legFR.position.set(0.32 * scale, 0.50 * scale, 0.68 * scale);
-        const legBL = new THREE.Group(); legBL.position.set(-0.32 * scale, 0.50 * scale, -0.68 * scale);
-        const legBR = new THREE.Group(); legBR.position.set(0.32 * scale, 0.50 * scale, -0.68 * scale);
+        // ==========================================
+        // C. EMPAT KAKI ANATOMIS DENGAN HOCK & KUKU BELAH (ANATOMICAL LEGS)
+        // ==========================================
+        const legFL = new THREE.Group(); legFL.position.set(-0.34 * scale, 0.50 * scale, 0.68 * scale);
+        const legFR = new THREE.Group(); legFR.position.set(0.34 * scale, 0.50 * scale, 0.68 * scale);
+        const legBL = new THREE.Group(); legBL.position.set(-0.34 * scale, 0.50 * scale, -0.68 * scale);
+        const legBR = new THREE.Group(); legBR.position.set(0.34 * scale, 0.50 * scale, -0.68 * scale);
 
-        [legFL, legFR, legBL, legBR].forEach((leg, i) => {
-            const isPatch = (i === 1 || i === 2);
-            const legColor = isPatch ? coatBlack : coatWhite;
+        const createClovenHoof = () => {
+            const hoofGroup = new THREE.Group();
+            [-1, 1].forEach(side => {
+                const claw = new THREE.Mesh(new THREE.BoxGeometry(0.068 * scale, 0.11 * scale, 0.18 * scale), hoofDark);
+                claw.position.set(side * 0.038 * scale, 0, 0);
+                claw.castShadow = true;
+                claw.receiveShadow = true;
+                hoofGroup.add(claw);
+            });
+            const dewclaw = new THREE.Mesh(new THREE.ConeGeometry(0.025 * scale, 0.06 * scale, 6), hoofDark);
+            dewclaw.rotation.x = -0.6;
+            dewclaw.position.set(0, 0.05 * scale, -0.10 * scale);
+            hoofGroup.add(dewclaw);
+            return hoofGroup;
+        };
 
-            const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.14 * scale, 0.09 * scale, 0.56 * scale, 8), legColor);
-            thigh.position.y = 0.09 * scale;
-            thigh.castShadow = true;
+        // KAKI DEPAN (FRONT LEGS)
+        [legFL, legFR].forEach((leg, i) => {
+            const isLeft = (i === 0);
+            const legColor = isLeft ? coatBlack : coatWhite;
 
-            const shank = new THREE.Mesh(new THREE.CylinderGeometry(0.085 * scale, 0.075 * scale, 0.50 * scale, 8), coatWhite);
-            shank.position.y = -0.32 * scale;
-            shank.castShadow = true;
+            const forearm = new THREE.Mesh(new THREE.CylinderGeometry(0.14 * scale, 0.095 * scale, 0.54 * scale, 10), legColor);
+            forearm.position.y = 0.10 * scale;
+            forearm.castShadow = true;
 
-            const hoof = new THREE.Mesh(new THREE.BoxGeometry(0.15 * scale, 0.11 * scale, 0.18 * scale), hoofDark);
-            hoof.position.set(0, -0.56 * scale, 0.02 * scale);
-            hoof.castShadow = true;
-            hoof.receiveShadow = true;
+            const knee = new THREE.Mesh(new THREE.SphereGeometry(0.095 * scale, 8, 8), coatWhite);
+            knee.position.y = -0.16 * scale;
+            knee.scale.set(1.0, 1.15, 1.1);
 
-            leg.add(thigh, shank, hoof);
+            const cannon = new THREE.Mesh(new THREE.CylinderGeometry(0.082 * scale, 0.072 * scale, 0.44 * scale, 8), coatWhite);
+            cannon.position.y = -0.38 * scale;
+            cannon.castShadow = true;
+
+            const hoof = createClovenHoof();
+            hoof.position.set(0, -0.58 * scale, 0.03 * scale);
+
+            leg.add(forearm, knee, cannon, hoof);
             root.add(leg);
         });
 
-        // D. Ekor Sapi Fleksibel dengan Rumbai Bulu Hitam (Tail with Brush Tuft)
+        // KAKI BELAKANG DENGAN SENDI HOCK (HIND LEGS WITH NATURAL HOCK ANGLE)
+        [legBL, legBR].forEach((leg, i) => {
+            const isLeft = (i === 0);
+            const legColor = isLeft ? coatWhite : coatBlack;
+
+            const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.16 * scale, 0.105 * scale, 0.50 * scale, 10), legColor);
+            thigh.rotation.x = 0.22;
+            thigh.position.set(0, 0.12 * scale, 0.05 * scale);
+            thigh.castShadow = true;
+
+            const hock = new THREE.Mesh(new THREE.BoxGeometry(0.11 * scale, 0.14 * scale, 0.16 * scale), coatWhite);
+            hock.position.set(0, -0.14 * scale, -0.06 * scale);
+
+            const rearCannon = new THREE.Mesh(new THREE.CylinderGeometry(0.082 * scale, 0.072 * scale, 0.46 * scale, 8), coatWhite);
+            rearCannon.rotation.x = -0.12;
+            rearCannon.position.set(0, -0.36 * scale, -0.02 * scale);
+            rearCannon.castShadow = true;
+
+            const hoof = createClovenHoof();
+            hoof.position.set(0, -0.58 * scale, 0.02 * scale);
+
+            leg.add(thigh, hock, rearCannon, hoof);
+            root.add(leg);
+        });
+
+        // ==========================================
+        // D. EKOR LENTUR DENGAN RUMBAI BULU HITAM LEBAT (BOVINE TAIL WITH BRUSH TUFT)
+        // ==========================================
         const tailGroup = new THREE.Group();
-        tailGroup.position.set(0, 1.38 * scale, -0.92 * scale);
-        const tailCord = new THREE.Mesh(new THREE.CylinderGeometry(0.028 * scale, 0.022 * scale, 0.72 * scale, 6), coatWhite);
-        tailCord.position.y = -0.36 * scale;
-        const tailBrush = new THREE.Mesh(new THREE.ConeGeometry(0.075 * scale, 0.26 * scale, 8), coatBlack);
-        tailBrush.position.y = -0.78 * scale;
-        tailGroup.add(tailCord, tailBrush);
+        tailGroup.position.set(0, 1.34 * scale, -0.96 * scale);
+
+        const tailHead = new THREE.Mesh(new THREE.SphereGeometry(0.06 * scale, 8, 8), coatBlack);
+        tailHead.position.set(0, 0, 0);
+
+        const tailCord = new THREE.Mesh(new THREE.CylinderGeometry(0.026 * scale, 0.018 * scale, 0.76 * scale, 8), coatWhite);
+        tailCord.position.set(0, -0.38 * scale, 0.02 * scale);
+        tailCord.rotation.x = -0.06;
+
+        const tailBrushGroup = new THREE.Group();
+        tailBrushGroup.position.set(0, -0.76 * scale, 0.04 * scale);
+
+        const brushCore = new THREE.Mesh(new THREE.ConeGeometry(0.085 * scale, 0.32 * scale, 10), coatBlack);
+        brushCore.rotation.x = Math.PI;
+        brushCore.position.y = -0.10 * scale;
+
+        const brushTuft = new THREE.Mesh(new THREE.SphereGeometry(0.09 * scale, 8, 8), coatBlack);
+        brushTuft.scale.set(0.85, 1.45, 0.95);
+        brushTuft.position.y = -0.06 * scale;
+
+        tailBrushGroup.add(brushCore, brushTuft);
+        tailGroup.add(tailHead, tailCord, tailBrushGroup);
         root.add(tailGroup);
 
-        root.userData = { head: headGroup, tailGroup, legFL, legFR, legBL, legBR, type: "cow" };
+        root.userData = {
+            head: headGroup,
+            headGroup: headGroup,
+            torso,
+            muzzle,
+            earL,
+            earR,
+            udder,
+            tailGroup,
+            legFL,
+            legFR,
+            legBL,
+            legBR,
+            type: "cow"
+        };
+
         return root;
     }
 
@@ -2109,13 +2330,18 @@ class ModelBuilder3D {
         headGroup.add(woolCap);
 
         // Telinga Turun Melengkung ke Bawah Samping (Drooping Ears Sesuai Prompt)
+        const earL = new THREE.Group();
+        const earR = new THREE.Group();
         [-1, 1].forEach(side => {
+            const earGrp = (side === -1) ? earL : earR;
+            earGrp.position.set(side * 0.22 * scale, 0.10 * scale, 0.20 * scale);
             const ear = new THREE.Mesh(new THREE.SphereGeometry(0.14 * scale, 8, 8), darkSkin);
             ear.scale.set(0.55, 1.25, 0.45);
-            ear.position.set(side * 0.22 * scale, 0.10 * scale, 0.20 * scale);
+            ear.position.set(0, 0, 0);
             ear.rotation.set(0.2, 0, side * -0.85);
             ear.castShadow = true;
-            headGroup.add(ear);
+            earGrp.add(ear);
+            headGroup.add(earGrp);
 
             // Mata Hitam Lembut
             const eye = new THREE.Mesh(new THREE.SphereGeometry(0.03 * scale, 6, 6), getMat(0x111111));
@@ -2151,11 +2377,13 @@ class ModelBuilder3D {
         root.add(legFL, legFR, legBL, legBR);
 
         // D. Ekor Wol Kecil di Belakang (Bobbed Wool Tail)
-        const bobTail = new THREE.Mesh(new THREE.SphereGeometry(0.12 * scale, 8, 8), woolMat);
+        const bobTail = new THREE.Group();
         bobTail.position.set(0, 0.72 * scale, -0.72 * scale);
+        const bobTailMesh = new THREE.Mesh(new THREE.SphereGeometry(0.12 * scale, 8, 8), woolMat);
+        bobTail.add(bobTailMesh);
         root.add(bobTail);
 
-        root.userData = { head: headGroup, legFL, legFR, legBL, legBR, type: "sheep", variant };
+        root.userData = { head: headGroup, torso, earL, earR, bobTail, legFL, legFR, legBL, legBR, type: "sheep", variant };
         return root;
     }
 

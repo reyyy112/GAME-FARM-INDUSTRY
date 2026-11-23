@@ -1264,19 +1264,11 @@ class GameEngine3D {
         // Pen center: cx = -20, cz = 21, rx = 7.0, rz = 5.5
         // ==========================================
         ownedCows.forEach((animal, idx) => {
-            const isEating = (idx < 2); // 1-2 sapi makan rumput di palung
             const mesh = MB.createCow();
 
-            let spawnX, spawnZ, rotY;
-            if (isEating) {
-                spawnX = -15.5;
-                spawnZ = 20.2 + idx * 1.5;
-                rotY = -Math.PI / 2;
-            } else {
-                spawnX = -20 + (Math.random() * 10 - 5);
-                spawnZ = 21 + (Math.random() * 8 - 4);
-                rotY = (Math.random() * 2 - 1) * Math.PI;
-            }
+            const spawnX = -20 + (Math.random() * 8 - 4);
+            const spawnZ = 21 + (Math.random() * 7 - 3.5);
+            const rotY = (Math.random() * 2 - 1) * Math.PI;
 
             mesh.position.set(spawnX, 0, spawnZ);
             mesh.rotation.y = rotY;
@@ -1286,13 +1278,16 @@ class GameEngine3D {
                 type: "cow",
                 stateRef: animal,
                 mesh: mesh,
+                spawnY: 0,
                 isNesting: false,
-                isEating: isEating,
-                penCenter: { x: -20, z: 21, rx: 7.0, rz: 5.5 },
+                isEating: false,
+                eatTimer: 0,
+                troughPos: { x: -16.8, z: 21.0 },
+                penCenter: { x: -20, z: 21, rx: 6.5, rz: 5.0 },
                 targetX: spawnX,
                 targetZ: spawnZ,
                 isWalking: false,
-                wanderTimer: isEating ? 9999 : (Math.random() * 4 + 2),
+                wanderTimer: Math.random() * 2.5 + 1.0,
                 peckTimer: 0,
                 produceTimer: animal.timer || (Math.random() * 6000),
                 produceInterval: animal.produceTime || 8000,
@@ -1305,20 +1300,12 @@ class GameEngine3D {
         // Pen center: cx = -20, cz = -13, rx = 7.0, rz = 5.5
         // ==========================================
         ownedSheep.forEach((animal, idx) => {
-            const isEating = (idx === 0); // 1 domba makan jerami di palung
             const variant = (idx % 3 === 0) ? "white" : (idx % 3 === 1 ? "cream" : "grey");
             const mesh = MB.createSheep(variant);
 
-            let spawnX, spawnZ, rotY;
-            if (isEating) {
-                spawnX = -15.5;
-                spawnZ = -13.0;
-                rotY = -Math.PI / 2;
-            } else {
-                spawnX = -20 + (Math.random() * 10 - 5);
-                spawnZ = -13 + (Math.random() * 8 - 4);
-                rotY = (Math.random() * 2 - 1) * Math.PI;
-            }
+            const spawnX = -20 + (Math.random() * 8 - 4);
+            const spawnZ = -13 + (Math.random() * 7 - 3.5);
+            const rotY = (Math.random() * 2 - 1) * Math.PI;
 
             mesh.position.set(spawnX, 0, spawnZ);
             mesh.rotation.y = rotY;
@@ -1328,13 +1315,16 @@ class GameEngine3D {
                 type: "sheep",
                 stateRef: animal,
                 mesh: mesh,
+                spawnY: 0,
                 isNesting: false,
-                isEating: isEating,
-                penCenter: { x: -20, z: -13, rx: 7.0, rz: 5.5 },
+                isEating: false,
+                eatTimer: 0,
+                troughPos: { x: -16.8, z: -13.0 },
+                penCenter: { x: -20, z: -13, rx: 6.5, rz: 5.0 },
                 targetX: spawnX,
                 targetZ: spawnZ,
                 isWalking: false,
-                wanderTimer: isEating ? 9999 : (Math.random() * 4 + 2),
+                wanderTimer: Math.random() * 2.5 + 1.0,
                 peckTimer: 0,
                 produceTimer: animal.timer || (Math.random() * 8000),
                 produceInterval: animal.produceTime || 11000,
@@ -1499,8 +1489,8 @@ class GameEngine3D {
         this.renderer.domElement.addEventListener("pointermove", (e) => {
             if (!this.isPointerDragging) return;
 
-            if (this.cameraMode === "firstperson") {
-                // Rotasi sudut pandang kamera FPV (Look Around 360°)
+            if (this.cameraMode === "firstperson" || this.cameraMode === "thirdperson") {
+                // Rotasi sudut pandang kamera FPV / Third-Person (Look Around 360°)
                 const dx = e.clientX - this.pointerDownPos.x;
                 const dy = e.clientY - this.pointerDownPos.y;
                 this.pointerDownPos = { x: e.clientX, y: e.clientY };
@@ -1544,15 +1534,25 @@ class GameEngine3D {
     }
 
     toggleCameraMode() {
-        this.cameraMode = (this.cameraMode === "overview") ? "firstperson" : "overview";
+        if (this.cameraMode === "overview") {
+            this.cameraMode = "thirdperson";
+        } else if (this.cameraMode === "thirdperson") {
+            this.cameraMode = "firstperson";
+        } else {
+            this.cameraMode = "overview";
+        }
         if (this.sound) this.sound.playMachine();
 
         // Notifikasi toast HUD bergaya Unreal Engine
         const toast = document.getElementById("cameraToast");
         if (toast) {
-            toast.textContent = (this.cameraMode === "firstperson")
-                ? "🎥 Mode: First-Person POV (Mata Pemain)"
-                : "🎥 Mode: Birds-Eye Overview (Diorama)";
+            if (this.cameraMode === "thirdperson") {
+                toast.textContent = "🏃 Mode: Third-Person (Kamera Mengikuti Petani dari Belakang)";
+            } else if (this.cameraMode === "firstperson") {
+                toast.textContent = "👀 Mode: First-Person POV (Mata Pemain - Jernih Tanpa Halangan)";
+            } else {
+                toast.textContent = "🎥 Mode: Birds-Eye Overview (Diorama 2.5D)";
+            }
             toast.classList.add("show");
             if (this.toastTimer) clearTimeout(this.toastTimer);
             this.toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
@@ -1566,7 +1566,13 @@ class GameEngine3D {
         // Label tombol pada header HUD
         const btnCam = document.getElementById("btnToggleCamera");
         if (btnCam) {
-            btnCam.textContent = (this.cameraMode === "firstperson") ? "🎥 Diorama (V)" : "🎥 FPV (V)";
+            if (this.cameraMode === "thirdperson") {
+                btnCam.textContent = "🏃 3rd (V)";
+            } else if (this.cameraMode === "firstperson") {
+                btnCam.textContent = "👀 FPV (V)";
+            } else {
+                btnCam.textContent = "🎥 Diorama (V)";
+            }
         }
     }
 
@@ -2152,6 +2158,7 @@ class GameEngine3D {
                 if (h.ent && h.ent.mesh) {
                     h.ent.mesh.position.y += 0.35;
                     setTimeout(() => { if (h.ent && h.ent.mesh) h.ent.mesh.position.y = 0; }, 280);
+                    this.spawnEmote3D(h.ent.mesh.position.x, h.ent.mesh.position.y + 1.2, h.ent.mesh.position.z, "❤️");
                 }
                 this.spawnSparks3D(h.ent.mesh.position.x, 1.2, h.ent.mesh.position.z, 0x69F0AE, 16);
                 this.state.stats.totalHarvested++;
@@ -2209,6 +2216,21 @@ class GameEngine3D {
                 if (m) m.classList.remove("hidden");
             });
         }
+
+        // Tab Navigasi Buku Panduan (How To Play Guide Tabs)
+        const guideNavBtns = document.querySelectorAll(".guide-nav-btn");
+        const guidePanes = document.querySelectorAll(".guide-tab-pane");
+        guideNavBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                guideNavBtns.forEach(b => b.classList.remove("active"));
+                guidePanes.forEach(p => p.classList.add("hidden"));
+                btn.classList.add("active");
+                const targetId = btn.getAttribute("data-target");
+                const targetPane = document.getElementById(targetId);
+                if (targetPane) targetPane.classList.remove("hidden");
+                if (this.sound && this.sound.playClick) this.sound.playClick();
+            });
+        });
 
         // Tombol Reset / Mulai Ulang Peternakan dari Awal
         const btnResetGame = document.getElementById("btnResetGame");
@@ -2336,6 +2358,7 @@ class GameEngine3D {
             // Simulator latar belakang tetap berjalan (truk, ternak, magnet hasil panen)
             this.updateTruck3D(dt);
             this.updateAnimalsAI(dt, timestamp);
+            this.updateFarmDog(dt, timestamp);
             this.updateGroundItems3D(dt);
             this.updateParticles3D(dt);
             return;
@@ -2354,9 +2377,10 @@ class GameEngine3D {
         let moveX = 0;
         let moveZ = 0;
         const isFPV = (this.cameraMode === "firstperson");
+        const isTPV = (this.cameraMode === "thirdperson");
 
-        if (isFPV) {
-            // Kontrol Mode First-Person POV: Berorientasi Arah Pandang Kamera
+        if (isFPV || isTPV) {
+            // Kontrol Mode Kamera Dinamis (First-Person & Third-Person Follow): Berorientasi Arah Kamera
             let fwd = 0;
             let strafe = 0;
             if (this.keys["w"]) fwd += 1;
@@ -2364,7 +2388,7 @@ class GameEngine3D {
             if (this.keys["d"]) strafe += 1;
             if (this.keys["a"]) strafe -= 1;
 
-            // Kontrol tombol panah untuk putar arah pandang FPV jika tanpa mouse drag
+            // Kontrol tombol panah untuk putar arah pandang kamera
             if (this.keys["arrowright"]) this.fpvYaw -= dt * 2.5;
             if (this.keys["arrowleft"]) this.fpvYaw += dt * 2.5;
             if (this.keys["arrowup"]) this.fpvPitch = Math.min(0.75, this.fpvPitch + dt * 1.5);
@@ -2373,7 +2397,7 @@ class GameEngine3D {
             if (fwd !== 0 || strafe !== 0) {
                 const sinY = Math.sin(this.fpvYaw);
                 const cosY = Math.cos(this.fpvYaw);
-                // Menghadap arah pandang pemain (FPV)
+                // Arah gerak sinkron dengan sudut pandang kamera
                 moveX = (sinY * fwd) + (cosY * strafe);
                 moveZ = (cosY * fwd) - (sinY * strafe);
             }
@@ -2434,7 +2458,11 @@ class GameEngine3D {
                 this.playerMesh.rotation.y = this.fpvYaw;
             } else {
                 const targetRot = Math.atan2(nx, nz);
-                this.playerMesh.rotation.y = targetRot;
+                // Rotasi halus menuju arah berjalan
+                let rDiff = targetRot - this.playerMesh.rotation.y;
+                while (rDiff < -Math.PI) rDiff += Math.PI * 2;
+                while (rDiff > Math.PI) rDiff -= Math.PI * 2;
+                this.playerMesh.rotation.y += rDiff * Math.min(1.0, dt * 12.0);
             }
 
             this.walkCycle += dt * 14;
@@ -2449,15 +2477,15 @@ class GameEngine3D {
         if (this.joyTimer > 0) this.joyTimer -= dt;
         this.animatePlayer(isMoving, dt);
 
-        // 2. Dynamic Dual-Camera System (Smooth Transition between Birds-Eye Diorama & Eye-Level FPV)
-        const targetFov = isFPV ? 76 : 30;
+        // 2. Dynamic Triple-Camera System (Diorama 2.5D, Third-Person Follow, & Clear First-Person POV)
+        const targetFov = isFPV ? 75 : (isTPV ? 62 : 30);
         const targetCamPos = new THREE.Vector3();
         const targetLookAt = new THREE.Vector3();
 
         if (isFPV) {
-            // Eye-level first-person POV walking through the farmyard & uphill showcase
+            // First-Person POV: Kamera tepat di ketinggian mata pemain
             const eyeHeight = 1.65;
-            const forwardOffset = 0.22;
+            const forwardOffset = 0.28;
             targetCamPos.set(
                 this.playerMesh.position.x + Math.sin(this.fpvYaw) * forwardOffset,
                 this.playerMesh.position.y + eyeHeight,
@@ -2469,10 +2497,29 @@ class GameEngine3D {
                 targetCamPos.z + Math.cos(this.fpvYaw) * Math.cos(this.fpvPitch) * 20
             );
 
-            // Sembunyikan kepala, ransel & papan nama saat FPV agar pandangan jernih tanpa clipping
-            if (this.playerMesh.userData.headGroup) this.playerMesh.userData.headGroup.visible = false;
-            if (this.playerMesh.userData.bagMesh) this.playerMesh.userData.bagMesh.visible = false;
-            if (this.nameplateSprite) this.nameplateSprite.visible = false;
+            // Sembunyikan TOTAL tubuh pemain di FPV agar pandangan 100% jernih tanpa clipping (tidak ada syal merah/garpu rumput)
+            this.playerMesh.visible = false;
+        } else if (isTPV) {
+            // Third-Person Follow POV: Kamera di belakang karakter dengan jarak aman tanpa halangan
+            const camDist = 4.4;
+            const camHeight = 2.4;
+            const pitchOffset = Math.sin(this.fpvPitch) * 1.5;
+            targetCamPos.set(
+                this.playerMesh.position.x - Math.sin(this.fpvYaw) * camDist,
+                this.playerMesh.position.y + camHeight - pitchOffset,
+                this.playerMesh.position.z - Math.cos(this.fpvYaw) * camDist
+            );
+            targetLookAt.set(
+                this.playerMesh.position.x + Math.sin(this.fpvYaw) * 1.8,
+                this.playerMesh.position.y + 1.25 + Math.sin(this.fpvPitch) * 2.8,
+                this.playerMesh.position.z + Math.cos(this.fpvYaw) * 1.8
+            );
+
+            // Tampilkan kembali tubuh pemain lengkap dengan kepala, topi, syal, dan alat kerja
+            this.playerMesh.visible = true;
+            if (this.playerMesh.userData.headGroup) this.playerMesh.userData.headGroup.visible = true;
+            if (this.playerMesh.userData.bagMesh) this.playerMesh.userData.bagMesh.visible = true;
+            if (this.nameplateSprite) this.nameplateSprite.visible = true;
         } else {
             // High-angle top-down birds-eye diorama overview klasik 2.5D (telephoto FOV 30°)
             targetCamPos.set(
@@ -2486,7 +2533,8 @@ class GameEngine3D {
                 this.playerMesh.position.z * 0.7 + 1.2
             );
 
-            // Tampilkan kembali kepala, ransel & papan nama pada mode overview
+            // Tampilkan kembali karakter pemain penuh
+            this.playerMesh.visible = true;
             if (this.playerMesh.userData.headGroup) this.playerMesh.userData.headGroup.visible = true;
             if (this.playerMesh.userData.bagMesh) this.playerMesh.userData.bagMesh.visible = true;
             if (this.nameplateSprite) this.nameplateSprite.visible = true;
@@ -2507,10 +2555,8 @@ class GameEngine3D {
         // 3. AI Pengembara & Animasi Hewan Ternak (Wandering & Natural Animal AI)
         this.updateAnimalsAI(dt, timestamp);
 
-        // 4. Ekor Anjing Mengibas Ramah
-        if (this.dogMesh && this.dogMesh.userData.tailGroup) {
-            this.dogMesh.userData.tailGroup.rotation.y = Math.sin(timestamp * 0.015) * 0.55;
-        }
+        // 4. Animasi Anjing Peternakan Dinamis & Interaktif
+        this.updateFarmDog(dt, timestamp);
 
         // 5. Magnet Panen Bahan di Tanah
         this.updateGroundItems3D(dt);
@@ -2564,9 +2610,17 @@ class GameEngine3D {
 
     updateAnimalsAI(dt, timestamp) {
         const petMult = this.state.getPetCareMultiplier ? this.state.getPetCareMultiplier() : 1.0;
+        const px = this.playerMesh ? this.playerMesh.position.x : 0;
+        const pz = this.playerMesh ? this.playerMesh.position.z : 0;
 
-        this.animalEntities.forEach(ent => {
+        this.animalEntities.forEach((ent, animalIdx) => {
             const aType = ent.type || (ent.stateRef && ent.stateRef.type) || "chicken";
+            const u = ent.mesh.userData;
+
+            // Timer internal hewan yang unik (tidak sinkron satu sama lain)
+            ent.animTime = (ent.animTime || (animalIdx * 1.73)) + dt;
+            const t = ent.animTime;
+            const pDist = Math.hypot(px - ent.mesh.position.x, pz - ent.mesh.position.z);
 
             // Produksi Bahan Mentah (Telur, Susu, Wol) Berkala
             // Dibatasi maksimal 24 item di tanah agar performa tetap ringan 60 FPS
@@ -2579,72 +2633,194 @@ class GameEngine3D {
                     const spawnX = ent.mesh.position.x + (Math.random() * 1.4 - 0.7);
                     const spawnZ = ent.mesh.position.z + (Math.random() * 1.4 - 0.7);
                     this.spawnGroundItem3D(prodType, spawnX, spawnZ);
+
+                    // Reaksi Visual Saat Menghasilkan Panen: Emote & Jingkrak Senang
+                    const emoteIcon = (aType === "chicken") ? "🥚" : (aType === "cow") ? "🥛" : "🧶";
+                    this.spawnEmote3D(ent.mesh.position.x, ent.mesh.position.y + 1.2, ent.mesh.position.z, emoteIcon);
+                    ent.produceHopTimer = 0.45;
                 }
             }
 
-            // Perilaku Spesial: Ayam Mengerami Telur di Sarang Jerami
+            // Tangani lompatan senang saat produksi
+            if (ent.produceHopTimer > 0) {
+                ent.produceHopTimer -= dt;
+                ent.mesh.position.y = (ent.spawnY || 0) + Math.sin((0.45 - ent.produceHopTimer) / 0.45 * Math.PI) * 0.22;
+                if (aType === "chicken" && u.wingL && u.wingR) {
+                    u.wingL.rotation.z = Math.sin(t * 32) * 0.65;
+                    u.wingR.rotation.z = -Math.sin(t * 32) * 0.65;
+                }
+            }
+
+            // ==========================================
+            // 1. AYAM: PERILAKU MENGERAMI DI SARANG JERAMI
+            // ==========================================
             if (ent.isNesting) {
                 ent.isWalking = false;
                 ent.mesh.position.y = ent.spawnY || 1.07;
-                const u = ent.mesh.userData;
+                
+                // Bernapas hangat dan mengembang (fluffy warm hen breathing)
+                if (u.torsoGroup) {
+                    const puff = Math.sin(t * 2.2);
+                    u.torsoGroup.scale.set(1.0 + puff * 0.02, 1.0 + puff * 0.035, 1.0 + puff * 0.02);
+                }
+
+                // Sayap dirapatkan hangat melindungi telur
+                if (u.wingL && u.wingR) {
+                    u.wingL.rotation.z = 0.06;
+                    u.wingR.rotation.z = -0.06;
+                }
+
                 if (u.headGroup) {
-                    ent.peckTimer = (ent.peckTimer || 0) + dt;
-                    // Gerakan kepala lembut mengerami telur (menunduk dan menoleh tenang)
-                    u.headGroup.rotation.x = Math.sin(ent.peckTimer * 2.0) * 0.12;
-                    u.headGroup.rotation.y = Math.sin(ent.peckTimer * 1.1) * 0.15;
+                    // Siklus mengerami: menoleh lembut, sesekali menunduk merapikan jerami/telur
+                    const nestCycle = (t % 7.0);
+                    if (nestCycle < 4.5) {
+                        // Menoleh santai dan memperhatikan sekeliling
+                        u.headGroup.rotation.x = 0.15 + Math.sin(t * 1.5) * 0.08;
+                        u.headGroup.rotation.y = Math.sin(t * 0.9) * 0.28;
+                        u.headGroup.rotation.z = Math.sin(t * 1.1) * 0.1;
+                    } else if (nestCycle < 5.8) {
+                        // Menunduk merapikan dan menghangatkan telur
+                        u.headGroup.rotation.x = 0.48 + Math.sin(t * 8.0) * 0.08;
+                        u.headGroup.rotation.y = 0;
+                        u.headGroup.rotation.z = 0;
+                    } else {
+                        // Menengadah tenang
+                        u.headGroup.rotation.x = -0.08;
+                        u.headGroup.rotation.y = Math.sin(t * 2.0) * 0.2;
+                    }
+                }
+
+                if (u.tailFan) {
+                    u.tailFan.rotation.y = Math.sin(t * 1.2) * 0.12;
+                }
+
+                // Emote tidur / mimpi sesekali di sarang
+                ent.nestEmoteTimer = (ent.nestEmoteTimer || (Math.random() * 8)) + dt;
+                if (ent.nestEmoteTimer > 14.0) {
+                    ent.nestEmoteTimer = 0;
+                    this.spawnEmote3D(ent.mesh.position.x, ent.mesh.position.y + 0.65, ent.mesh.position.z, Math.random() > 0.5 ? "💤" : "✨");
                 }
                 return;
             }
 
-            // Perilaku Spesial: Ayam di Tangga Kayu (Bersiap Turun / Naik)
+            // ==========================================
+            // 2. AYAM: PERILAKU DI TANGGA KAYU KANDANG
+            // ==========================================
             if (ent.isOnRamp) {
                 ent.isWalking = false;
                 ent.mesh.position.y = ent.spawnY || 0.65;
-                const u = ent.mesh.userData;
+                // Sayap sedikit membentang menjaga keseimbangan di tangga
+                if (u.wingL && u.wingR) {
+                    u.wingL.rotation.z = 0.2 + Math.sin(t * 3.5) * 0.06;
+                    u.wingR.rotation.z = -0.2 - Math.sin(t * 3.5) * 0.06;
+                }
                 if (u.headGroup) {
-                    ent.peckTimer = (ent.peckTimer || 0) + dt;
-                    u.headGroup.rotation.x = Math.sin(ent.peckTimer * 1.8) * 0.12;
-                    u.headGroup.rotation.y = Math.sin(ent.peckTimer * 0.9) * 0.18;
+                    u.headGroup.rotation.x = 0.32 + Math.sin(t * 2.0) * 0.12;
+                    u.headGroup.rotation.y = Math.sin(t * 1.0) * 0.25;
                 }
                 return;
             }
 
-            // Perilaku Spesial: Sapi & Domba yang Sedang Makan di Palung (Feeding Trough)
+            // ==========================================
+            // 3. SAPI & DOMBA: MAKAN DI PALUNG (FEEDING TROUGH)
+            // ==========================================
             if (ent.isEating) {
                 ent.isWalking = false;
-                const u = ent.mesh.userData;
+                ent.eatTimer = (ent.eatTimer || 8.0) - dt;
+
+                // Ketika kenyang makan di palung, tinggalkan palung & kembali mengembara ke padang rumput
+                if (ent.eatTimer <= 0) {
+                    ent.isEating = false;
+                    ent.wanderTimer = Math.random() * 2.5 + 1.0;
+                    ent.isWalking = true;
+                    if (ent.penCenter) {
+                        const rx = ent.penCenter.rx || 6.5;
+                        const rz = ent.penCenter.rz || 5.0;
+                        ent.targetX = ent.penCenter.x + (Math.random() * 2 - 1) * (rx * 0.85);
+                        ent.targetZ = ent.penCenter.z + (Math.random() * 2 - 1) * (rz * 0.85);
+                    }
+                }
+
                 if (aType === "cow") {
+                    // Mengunyah memamah biak dengan ritme melingkar (elliptical cud chewing)
                     if (u.head) {
-                        // Menunduk ke palung mengunyah rumput segar
-                        u.head.rotation.x = 0.28 + Math.sin(timestamp * 0.005) * 0.08;
+                        u.head.rotation.x = 0.34 + Math.sin(t * 5.0) * 0.06;
+                        u.head.rotation.z = Math.sin(t * 5.0) * 0.035;
+                    }
+                    if (u.muzzle) {
+                        u.muzzle.position.x = Math.sin(t * 5.0) * 0.024;
+                        u.muzzle.position.y = 0.22 * 1.38 + Math.abs(Math.sin(t * 5.0)) * 0.015;
                     }
                     if (u.tailGroup) {
-                        u.tailGroup.rotation.z = Math.sin(timestamp * 0.007) * 0.45;
+                        // Ayunan ekor harmonik natural mengusir serangga
+                        u.tailGroup.rotation.z = Math.sin(t * 2.2) * 0.42 + Math.sin(t * 4.4) * 0.18;
+                        u.tailGroup.rotation.x = -Math.abs(Math.sin(t * 2.2)) * 0.15;
+                    }
+                    if (u.torso) {
+                        u.torso.scale.x = 1.0 + Math.sin(t * 1.6) * 0.02;
+                        u.torso.scale.y = 1.0 + Math.sin(t * 1.6) * 0.015;
+                    }
+                    // Goyangan telinga mandiri mengusir lalat
+                    ent.earTimer = (ent.earTimer || 0) + dt;
+                    if (Math.sin(ent.earTimer * 0.8) > 0.85 && u.earL && u.earR) {
+                        u.earL.rotation.z = Math.sin(t * 32) * 0.35;
+                        u.earR.rotation.z = -Math.sin(t * 28) * 0.35;
+                    } else if (u.earL && u.earR) {
+                        u.earL.rotation.z = 0;
+                        u.earR.rotation.z = 0;
                     }
                 } else if (aType === "sheep") {
+                    // Domba mengunyah jerami kering dengan ritme cepat
                     if (u.head) {
-                        // Menunduk ke palung mengunyah jerami kering
-                        u.head.rotation.x = 0.32 + Math.sin(timestamp * 0.006) * 0.08;
+                        u.head.rotation.x = 0.32 + Math.sin(t * 8.5) * 0.06;
+                        u.head.rotation.z = Math.sin(t * 8.5) * 0.025;
+                    }
+                    if (u.earL && u.earR) {
+                        u.earL.rotation.z = Math.sin(t * 4.0) * 0.12;
+                        u.earR.rotation.z = -Math.sin(t * 4.0) * 0.12;
+                    }
+                    if (u.bobTail) {
+                        u.bobTail.rotation.y = Math.sin(t * 12.0) * 0.35;
+                    }
+                    if (u.torso) {
+                        u.torso.scale.y = 1.0 + Math.sin(t * 2.0) * 0.025;
                     }
                 }
                 return;
             }
 
-            // AI Berjalan Mengembara di Dalam Paddock yang Luas (Wandering AI)
-            ent.wanderTimer = (ent.wanderTimer || 2.0) - dt;
+            // ==========================================
+            // 4. AI PENGEMBARA DI KANDANG (WANDERING DECISION)
+            // ==========================================
+            ent.wanderTimer = (ent.wanderTimer || (Math.random() * 3 + 2)) - dt;
             if (ent.wanderTimer <= 0) {
-                ent.wanderTimer = Math.random() * 4 + 2;
-                ent.isWalking = Math.random() > 0.45;
+                ent.wanderTimer = Math.random() * 4 + 2.5;
+                ent.isWalking = Math.random() > 0.35; // Aktif berjalan ~65% waktu
 
                 if (ent.isWalking && ent.penCenter) {
-                    // Tentukan koordinat acak baru di dalam luas ladang paddock masing-masing
-                    const rx = ent.penCenter.rx || 7.0;
-                    const rz = ent.penCenter.rz || 5.0;
-                    ent.targetX = ent.penCenter.x + (Math.random() * 2 - 1) * (rx * 0.85);
-                    ent.targetZ = ent.penCenter.z + (Math.random() * 2 - 1) * (rz * 0.85);
+                    // 25% kemungkinan memutuskan mampir makan ke palung makan
+                    const wantsToEatAtTrough = (aType === "cow" || aType === "sheep") && (Math.random() < 0.25) && ent.troughPos;
+                    if (wantsToEatAtTrough) {
+                        ent.targetX = ent.troughPos.x;
+                        ent.targetZ = ent.troughPos.z + (Math.random() * 2 - 1) * 1.0;
+                        ent.headingToTrough = true;
+                    } else {
+                        ent.headingToTrough = false;
+                        const rx = ent.penCenter.rx || 6.5;
+                        const rz = ent.penCenter.rz || 5.0;
+                        ent.targetX = ent.penCenter.x + (Math.random() * 2 - 1) * (rx * 0.85);
+                        ent.targetZ = ent.penCenter.z + (Math.random() * 2 - 1) * (rz * 0.85);
+                    }
+                    // Acak flap sayap saat ayam mulai melangkah
+                    if (aType === "chicken" && Math.random() > 0.6) {
+                        ent.flapDuration = 0.65;
+                    }
                 }
             }
 
+            // ==========================================
+            // 5. STATUS BERJALAN (LOCOMOTION KINEMATICS)
+            // ==========================================
             if (ent.isWalking) {
                 const dx = ent.targetX - ent.mesh.position.x;
                 const dz = ent.targetZ - ent.mesh.position.z;
@@ -2656,66 +2832,352 @@ class GameEngine3D {
                     const wSpeed = ent.walkSpeed || 1.0;
                     ent.mesh.position.x += nx * wSpeed * dt;
                     ent.mesh.position.z += nz * wSpeed * dt;
-                    ent.mesh.rotation.y = Math.atan2(nx, nz);
 
-                    const u = ent.mesh.userData;
-                    // Animasi langkah ayam
+                    // Rotasi halus menghadap arah jalan
+                    const targetRot = Math.atan2(nx, nz);
+                    let diff = targetRot - ent.mesh.rotation.y;
+                    while (diff < -Math.PI) diff += Math.PI * 2;
+                    while (diff > Math.PI) diff -= Math.PI * 2;
+                    ent.mesh.rotation.y += diff * dt * 6.0;
+
                     if (aType === "chicken") {
-                        ent.mesh.position.y = Math.abs(Math.sin(timestamp * 0.012 * wSpeed)) * 0.06;
+                        // Gaya Jalan Ayam Khas: Gerakan Kepala Mengangguk-Nodding (Head-Bobbing)
+                        const stepFreq = 16.0 * wSpeed;
+                        const stepPhase = Math.sin(t * stepFreq);
+                        
+                        ent.mesh.position.y = (ent.spawnY || 0) + Math.abs(stepPhase) * 0.055;
+                        ent.mesh.rotation.z = stepPhase * 0.06; // Goyang badan kiri-kanan waddle
+
                         if (u.leftLeg && u.rightLeg) {
-                            const walkPhase = Math.sin(timestamp * 0.015);
-                            u.leftLeg.rotation.x = walkPhase * 0.5;
-                            u.rightLeg.rotation.x = -walkPhase * 0.5;
+                            u.leftLeg.rotation.x = stepPhase * 0.65;
+                            u.rightLeg.rotation.x = -stepPhase * 0.65;
                         }
-                    } else {
-                        // Animasi langkah 4 kaki (Sapi & Domba)
-                        ent.mesh.position.y = Math.abs(Math.sin(timestamp * 0.008 * wSpeed)) * 0.05;
+
+                        // Kepala mematuk maju-mundur secara sinkron dengan langkah kaki (Head-Bob)
+                        if (u.headGroup) {
+                            u.headGroup.position.z = 0.32 * 0.9 + Math.max(-0.02, stepPhase * 0.06);
+                            u.headGroup.rotation.x = Math.max(0, stepPhase) * 0.22;
+                            u.headGroup.rotation.y = 0;
+                            u.headGroup.rotation.z = 0;
+                        }
+
+                        if (u.tailFan) {
+                            u.tailFan.rotation.y = stepPhase * 0.2;
+                        }
+
+                        // Kepakan sayap sesekali saat berjalan
+                        if (ent.flapDuration > 0 && u.wingL && u.wingR) {
+                            ent.flapDuration -= dt;
+                            const flapAngle = Math.sin(t * 30.0) * 0.55;
+                            u.wingL.rotation.z = flapAngle;
+                            u.wingR.rotation.z = -flapAngle;
+                        } else if (u.wingL && u.wingR) {
+                            u.wingL.rotation.z = 0;
+                            u.wingR.rotation.z = 0;
+                        }
+                    } else if (aType === "cow") {
+                        // Gaya Jalan Sapi: Quadruped Gait 4 Kaki yang Berat & Megah
+                        const stride = Math.sin(t * 5.5 * wSpeed);
+                        ent.mesh.position.y = Math.abs(stride) * 0.04;
+                        ent.mesh.rotation.z = stride * 0.025; // Goyang badan khas sapi
+
                         if (u.legFL && u.legFR && u.legBL && u.legBR) {
-                            const stride = Math.sin(timestamp * 0.008);
-                            u.legFL.rotation.x = stride * 0.35;
-                            u.legBR.rotation.x = stride * 0.35;
-                            u.legFR.rotation.x = -stride * 0.35;
-                            u.legBL.rotation.x = -stride * 0.35;
+                            u.legFL.rotation.x = stride * 0.38;
+                            u.legBR.rotation.x = stride * 0.38;
+                            u.legFR.rotation.x = -stride * 0.38;
+                            u.legBL.rotation.x = -stride * 0.38;
+                        }
+
+                        if (u.head) {
+                            u.head.rotation.x = 0.06 + Math.sin(t * 5.5 * wSpeed) * 0.07;
+                            u.head.rotation.z = Math.sin(t * 5.5 * wSpeed) * 0.03;
+                        }
+
+                        if (u.tailGroup) {
+                            u.tailGroup.rotation.z = Math.sin(t * 3.0) * 0.45;
+                        }
+
+                        if (u.torso) {
+                            u.torso.scale.x = 1.0 + Math.sin(t * 1.8) * 0.02;
+                            u.torso.scale.y = 1.0 + Math.sin(t * 1.8) * 0.015;
+                        }
+                    } else if (aType === "sheep") {
+                        // Gaya Jalan Domba: Bouncy Skip & Wool Bobbing yang Menggemaskan
+                        const sheepStride = Math.sin(t * 8.5 * wSpeed);
+                        ent.mesh.position.y = Math.abs(sheepStride) * 0.09;
+
+                        if (u.legFL && u.legFR && u.legBL && u.legBR) {
+                            u.legFL.rotation.x = sheepStride * 0.46;
+                            u.legBR.rotation.x = sheepStride * 0.46;
+                            u.legFR.rotation.x = -sheepStride * 0.46;
+                            u.legBL.rotation.x = -sheepStride * 0.46;
+                        }
+
+                        if (u.torso) {
+                            // Squash & stretch bulu wol montok saat meloncat kecil
+                            u.torso.scale.y = 1.0 + Math.sin(t * 17.0 * wSpeed) * 0.04;
+                        }
+
+                        if (u.head) {
+                            u.head.rotation.x = 0.12 + sheepStride * 0.08;
+                        }
+
+                        if (u.earL && u.earR) {
+                            u.earL.rotation.z = Math.sin(t * 8.5) * 0.18;
+                            u.earR.rotation.z = -Math.sin(t * 8.5) * 0.18;
+                        }
+
+                        if (u.bobTail) {
+                            u.bobTail.rotation.y = Math.sin(t * 14.0) * 0.45;
                         }
                     }
                 } else {
                     ent.isWalking = false;
                     ent.mesh.position.y = ent.spawnY || 0;
+                    ent.mesh.rotation.z = 0;
+
+                    // Jika hewan baru saja tiba di palung makan, mulai sesi makan rumput / jerami
+                    if (ent.headingToTrough) {
+                        ent.headingToTrough = false;
+                        ent.isEating = true;
+                        ent.eatTimer = Math.random() * 6 + 6; // Makan selama 6 - 12 detik
+                        ent.mesh.rotation.y = -Math.PI / 2; // Menghadap lurus ke palung kayu
+                    }
                 }
             } else {
-                ent.mesh.position.y = ent.spawnY || 0;
-                const u = ent.mesh.userData;
+                // ==========================================
+                // 6. STATUS DIAM & INTERAKSI ALAMI (IDLE LIVING BEHAVIORS)
+                // ==========================================
+                if (!ent.produceHopTimer || ent.produceHopTimer <= 0) {
+                    ent.mesh.position.y = ent.spawnY || 0;
+                }
 
-                // Animasi saat diam (Pecking ayam, Mengibas ekor sapi, Mengunyah rumput)
                 if (aType === "chicken") {
                     if (u.leftLeg && u.rightLeg) {
                         u.leftLeg.rotation.x = 0;
                         u.rightLeg.rotation.x = 0;
                     }
-                    if (u.headGroup) {
-                        ent.peckTimer = (ent.peckTimer || 0) + dt;
-                        if (Math.sin(ent.peckTimer * 2.4) > 0.35) {
-                            u.headGroup.rotation.x = 0.55; // Mematuk biji-bijian di tanah
-                        } else {
-                            u.headGroup.rotation.x = Math.sin(ent.peckTimer * 1.5) * 0.08;
+                    ent.mesh.rotation.z = 0;
+
+                    // Siklus Mematuk & Merawat Bulu Alami (Peck & Preen Routine)
+                    const cycle = (t % 6.0);
+                    if (cycle < 2.4) {
+                        // Fase 1: Memperhatikan tanah dengan satu mata (Lateral Monocular Look)
+                        if (u.headGroup) {
+                            u.headGroup.position.z = 0.32 * 0.9;
+                            u.headGroup.rotation.x = 0.18 + Math.sin(t * 1.8) * 0.06;
+                            u.headGroup.rotation.y = Math.sin(t * 1.2) * 0.45;
+                            u.headGroup.rotation.z = Math.sin(t * 1.5) * 0.16;
+                        }
+                        if (u.wingL && u.wingR) { u.wingL.rotation.z = 0; u.wingR.rotation.z = 0; }
+                    } else if (cycle < 3.8) {
+                        // Fase 2: Mematuk cepat biji-bijian di tanah (Snappy Pecking)
+                        if (u.headGroup) {
+                            const peckFast = Math.sin(t * 18.0);
+                            u.headGroup.position.z = 0.32 * 0.9;
+                            u.headGroup.rotation.x = (peckFast > 0.2) ? 0.82 : 0.42;
+                            u.headGroup.rotation.y = 0;
+                            u.headGroup.rotation.z = 0;
+                        }
+                    } else if (cycle < 4.8) {
+                        // Fase 3: Mengibaskan ekor & merapikan bulu (Tail Waggle & Feather Ruffle)
+                        if (u.tailFan) {
+                            u.tailFan.rotation.y = Math.sin(t * 26.0) * 0.38;
+                        }
+                        if (u.torsoGroup) {
+                            u.torsoGroup.scale.set(1.05, 1.04, 1.05);
+                        }
+                        if (u.wingL && u.wingR) {
+                            u.wingL.rotation.z = 0.2;
+                            u.wingR.rotation.z = -0.2;
+                        }
+                        if (u.headGroup) {
+                            u.headGroup.rotation.x = -0.15;
+                            u.headGroup.rotation.y = Math.sin(t * 2.5) * 0.3;
+                        }
+                    } else {
+                        // Fase 4: Kembali tenang bersiap
+                        if (u.torsoGroup) u.torsoGroup.scale.set(1, 1, 1);
+                        if (u.wingL && u.wingR) { u.wingL.rotation.z = 0; u.wingR.rotation.z = 0; }
+                        if (u.headGroup) {
+                            u.headGroup.rotation.x = Math.sin(t * 2.0) * 0.08;
+                            u.headGroup.rotation.y = Math.sin(t * 1.2) * 0.2;
+                        }
+                    }
+
+                    // Lompatan kecil ceria sesekali
+                    ent.hopCooldown = (ent.hopCooldown || (Math.random() * 8 + 4)) - dt;
+                    if (ent.hopCooldown <= 0) {
+                        ent.hopCooldown = Math.random() * 10 + 6;
+                        ent.hopTimer = 0.32;
+                    }
+                    if (ent.hopTimer > 0) {
+                        ent.hopTimer -= dt;
+                        ent.mesh.position.y = (ent.spawnY || 0) + Math.sin((0.32 - ent.hopTimer) / 0.32 * Math.PI) * 0.16;
+                        if (u.wingL && u.wingR) {
+                            u.wingL.rotation.z = Math.sin(t * 30) * 0.55;
+                            u.wingR.rotation.z = -Math.sin(t * 30) * 0.55;
                         }
                     }
                 } else if (aType === "cow") {
                     if (u.legFL) { u.legFL.rotation.x = 0; u.legFR.rotation.x = 0; u.legBL.rotation.x = 0; u.legBR.rotation.x = 0; }
-                    if (u.tailGroup) {
-                        u.tailGroup.rotation.z = Math.sin(timestamp * 0.006) * 0.5; // Mengibas ekor
+
+                    // Pergeseran berat badan halus dari satu kaki ke kaki lain (Weight Shifting)
+                    ent.mesh.rotation.z = Math.sin(t * 0.6) * 0.016;
+
+                    // Mengunyah memamah biak (Cud Chewing) & Bernapas Tenang
+                    if (u.muzzle) {
+                        u.muzzle.position.x = Math.sin(t * 5.2) * 0.022;
+                        u.muzzle.position.y = 0.22 * 1.38 + Math.abs(Math.sin(t * 5.2)) * 0.012;
                     }
                     if (u.head) {
-                        u.head.rotation.x = Math.sin(timestamp * 0.003) * 0.08; // Bernapas tenang
+                        // Jika pemain mendekat, sapi menoleh memperhatikan pemain
+                        if (pDist < 5.0) {
+                            const lookAngle = Math.atan2(px - ent.mesh.position.x, pz - ent.mesh.position.z);
+                            let hDiff = lookAngle - ent.mesh.rotation.y;
+                            while (hDiff < -Math.PI) diff = hDiff + Math.PI * 2;
+                            while (hDiff > Math.PI) diff = hDiff - Math.PI * 2;
+                            u.head.rotation.y += (Math.max(-0.6, Math.min(0.6, hDiff)) - u.head.rotation.y) * dt * 3.0;
+                            u.head.rotation.x = -0.05 + Math.sin(t * 1.5) * 0.04;
+                        } else {
+                            u.head.rotation.y = Math.sin(t * 0.8) * 0.18;
+                            u.head.rotation.x = Math.sin(t * 1.8) * 0.06;
+                        }
+                        u.head.rotation.z = Math.sin(t * 5.2) * 0.03;
+                    }
+
+                    // Pernapasan dada silinder besar
+                    if (u.torso) {
+                        u.torso.scale.x = 1.0 + Math.sin(t * 1.6) * 0.022;
+                        u.torso.scale.y = 1.0 + Math.sin(t * 1.6) * 0.016;
+                    }
+
+                    // Kibasan ekor lalat dua arah
+                    if (u.tailGroup) {
+                        u.tailGroup.rotation.z = Math.sin(t * 2.2) * 0.45 + Math.sin(t * 4.4) * 0.18;
+                        u.tailGroup.rotation.x = -Math.abs(Math.sin(t * 2.2)) * 0.16;
+                    }
+
+                    // Kedutan telinga mendadak mengusir lalat
+                    ent.cowEarTimer = (ent.cowEarTimer || 0) + dt;
+                    if (Math.sin(ent.cowEarTimer * 1.1) > 0.88 && u.earL && u.earR) {
+                        u.earL.rotation.z = Math.sin(t * 35) * 0.35;
+                        u.earR.rotation.z = -Math.sin(t * 30) * 0.35;
+                    } else if (u.earL && u.earR) {
+                        u.earL.rotation.z = 0;
+                        u.earR.rotation.z = 0;
                     }
                 } else if (aType === "sheep") {
                     if (u.legFL) { u.legFL.rotation.x = 0; u.legFR.rotation.x = 0; u.legBL.rotation.x = 0; u.legBR.rotation.x = 0; }
+
+                    // Domba merumput dan mengunyah jerami cepat
                     if (u.head) {
-                        u.head.rotation.x = 0.2 + Math.sin(timestamp * 0.004) * 0.12; // Menunduk merumput
+                        if (pDist < 4.5) {
+                            // Menengadah ramah menatap pemain
+                            u.head.rotation.x = -0.12 + Math.sin(t * 2.0) * 0.06;
+                            const lookAngle = Math.atan2(px - ent.mesh.position.x, pz - ent.mesh.position.z);
+                            let hDiff = lookAngle - ent.mesh.rotation.y;
+                            while (hDiff < -Math.PI) diff = hDiff + Math.PI * 2;
+                            while (hDiff > Math.PI) diff = hDiff - Math.PI * 2;
+                            u.head.rotation.y += (Math.max(-0.7, Math.min(0.7, hDiff)) - u.head.rotation.y) * dt * 4.0;
+                        } else {
+                            // Menunduk merumput di padang rumput
+                            u.head.rotation.x = 0.28 + Math.sin(t * 10.0) * 0.05;
+                            u.head.rotation.y = Math.sin(t * 1.0) * 0.22;
+                        }
+                    }
+
+                    // Goyangan telinga turun lembut
+                    if (u.earL && u.earR) {
+                        u.earL.rotation.z = Math.sin(t * 3.2) * 0.14;
+                        u.earR.rotation.z = -Math.sin(t * 3.2) * 0.14;
+                    }
+
+                    // Kibasan ekor wol mini (cute bobtail wag)
+                    if (u.bobTail) {
+                        u.bobTail.rotation.y = Math.sin(t * 14.0) * 0.42;
+                        u.bobTail.rotation.x = Math.sin(t * 7.0) * 0.2;
+                    }
+
+                    // Napas badan wol bulat
+                    if (u.torso) {
+                        u.torso.scale.y = 1.0 + Math.sin(t * 2.4) * 0.024;
                     }
                 }
             }
         });
+    }
+
+    updateFarmDog(dt, timestamp) {
+        if (!this.dogMesh) return;
+        const u = this.dogMesh.userData;
+        const px = this.playerMesh ? this.playerMesh.position.x : 0;
+        const pz = this.playerMesh ? this.playerMesh.position.z : 0;
+        const dx = px - this.dogMesh.position.x;
+        const dz = pz - this.dogMesh.position.z;
+        const dist = Math.hypot(dx, dz);
+
+        const isPlayerClose = dist < 6.5;
+        this.dogTime = (this.dogTime || 0) + dt;
+        const t = this.dogTime;
+
+        if (isPlayerClose) {
+            // Anjing gembira menyambut kedatangan petani!
+            const targetAngle = Math.atan2(dx, dz);
+            if (u.headGroup) {
+                let diff = targetAngle - this.dogMesh.rotation.y;
+                while (diff < -Math.PI) diff += Math.PI * 2;
+                while (diff > Math.PI) diff -= Math.PI * 2;
+                u.headGroup.rotation.y += (diff * 0.7 - u.headGroup.rotation.y) * dt * 8.0;
+                u.headGroup.rotation.x = -0.12 + Math.sin(t * 8) * 0.06;
+                u.headGroup.rotation.z = Math.sin(t * 4) * 0.12; // Miringkan kepala lucu
+            }
+            // Ekor mengibas cepat dan gembira
+            if (u.tailGroup) {
+                u.tailGroup.rotation.y = Math.sin(t * 22) * 0.85;
+            }
+            // Telinga berdiri senang
+            if (u.earL && u.earR) {
+                u.earL.rotation.z = 0.18 + Math.sin(t * 12) * 0.08;
+                u.earR.rotation.z = -0.18 - Math.sin(t * 12) * 0.08;
+            }
+            // Lidah menjulur bernapas ceria
+            if (u.tongue) {
+                u.tongue.scale.z = 1.0 + Math.sin(t * 15) * 0.35;
+            }
+            // Jingkrak-jingkrak senang
+            this.dogMesh.position.y = Math.abs(Math.sin(t * 8)) * 0.06;
+
+            // Beri emote cinta/jejak kaki sesekali saat dekat
+            if (dist < 3.2) {
+                this.dogEmoteTimer = (this.dogEmoteTimer || 0) + dt;
+                if (this.dogEmoteTimer > 5.0) {
+                    this.dogEmoteTimer = 0;
+                    this.spawnEmote3D(this.dogMesh.position.x, 1.4, this.dogMesh.position.z, Math.random() > 0.4 ? "❤️" : "🐾");
+                }
+            }
+        } else {
+            // Bersantai mengawasi peternakan
+            if (u.headGroup) {
+                u.headGroup.rotation.y = Math.sin(t * 1.2) * 0.32;
+                u.headGroup.rotation.x = Math.sin(t * 2.0) * 0.05;
+                u.headGroup.rotation.z = 0;
+            }
+            if (u.tailGroup) {
+                u.tailGroup.rotation.y = Math.sin(t * 8) * 0.35;
+            }
+            if (u.earL && u.earR) {
+                u.earL.rotation.z = Math.sin(t * 3) * 0.05;
+                u.earR.rotation.z = -Math.sin(t * 3) * 0.05;
+            }
+            if (u.tongue) {
+                u.tongue.scale.z = 0.5;
+            }
+            if (u.torsoGroup) {
+                u.torsoGroup.scale.y = 1.0 + Math.sin(t * 2) * 0.02;
+            }
+            this.dogMesh.position.y = 0;
+        }
     }
 
     animatePlayer(isMoving, dt) {
@@ -3481,16 +3943,67 @@ class GameEngine3D {
         }
     }
 
+    getEmoteTexture(emoji) {
+        if (!this.emoteTextures) this.emoteTextures = {};
+        if (this.emoteTextures[emoji]) return this.emoteTextures[emoji];
+        if (typeof document === "undefined") return null;
+        const canvas = document.createElement("canvas");
+        canvas.width = 128;
+        canvas.height = 128;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return null;
+        ctx.clearRect(0, 0, 128, 128);
+        ctx.font = "72px 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(emoji, 64, 68);
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.minFilter = THREE.LinearFilter;
+        this.emoteTextures[emoji] = tex;
+        return tex;
+    }
+
+    spawnEmote3D(x, y, z, emoji = "❤️", riseDist = 1.8, duration = 1.6) {
+        const tex = this.getEmoteTexture(emoji);
+        if (!tex) return;
+        const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, opacity: 1.0, depthWrite: false });
+        const sprite = new THREE.Sprite(mat);
+        sprite.scale.set(0.9, 0.9, 1.0);
+        sprite.position.set(x, y, z);
+        this.scene.add(sprite);
+
+        this.particles3D.push({
+            mesh: sprite,
+            vx: (Math.random() - 0.5) * 0.4,
+            vy: riseDist / duration,
+            vz: (Math.random() - 0.5) * 0.4,
+            life: duration,
+            maxLife: duration,
+            isEmote: true
+        });
+    }
+
     updateParticles3D(dt) {
         for (let i = this.particles3D.length - 1; i >= 0; i--) {
             const p = this.particles3D[i];
             p.mesh.position.x += p.vx * dt;
             p.mesh.position.y += p.vy * dt;
             p.mesh.position.z += p.vz * dt;
-            p.vy -= 12 * dt;
+            if (p.isEmote) {
+                if (p.mesh.material) {
+                    p.mesh.material.opacity = Math.max(0, Math.min(1.0, (p.life / p.maxLife) * 1.5));
+                }
+                p.mesh.position.x += Math.sin((p.maxLife - p.life) * 4) * 0.006;
+                p.mesh.scale.multiplyScalar(1.0 + 0.1 * dt);
+            } else {
+                p.vy -= 12 * dt;
+            }
             p.life -= dt;
             if (p.life <= 0) {
                 this.scene.remove(p.mesh);
+                if (p.isEmote && p.mesh.material) {
+                    p.mesh.material.dispose();
+                }
                 this.particles3D.splice(i, 1);
             }
         }
